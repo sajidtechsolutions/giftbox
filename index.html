@@ -506,7 +506,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Google Sheets API URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz6aOCJ4S4-zXqBsjTpu13ies2U0uFcq8RUVlG06p4ISc8KuzEVmFJ4ChhAXumOXZFR/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwQdPEkH41h5MZNsqdVHm6V0IxjsFB4BhRDg0qZJ_mTTAhwanGjRchUNF9l58b79O7u/exec';
 
         // ফর্ম সাবমিশন হ্যান্ডলার
         document.querySelector('form').addEventListener('submit', function(e) {
@@ -522,17 +522,15 @@
 
                 // ফর্ম ডাটা সংগ্রহ
                 const formData = new FormData();
-                formData.append('name', this.querySelector('input[placeholder*="তার নাম"]').value);
-                formData.append('email', this.querySelector('input[placeholder*="০১৭১২৩৪৫৬৭৮"]').value);
-                formData.append('message', JSON.stringify({
-                    recipient_relation: this.querySelector('input[placeholder*="মা, বাবা"]').value,
-                    age: this.querySelector('input[placeholder*="২৫"]').value,
-                    gender: this.querySelector('select').value,
-                    about_recipient: this.querySelector('textarea[placeholder*="তার পছন্দের জিনিস"]').value,
-                    budget: this.querySelector('input[placeholder*="৫০০ টাকা"]').value,
-                    address: this.querySelector('textarea[placeholder*="বিস্তারিত ঠিকানা"]').value
-                }));
-                formData.append('sheetId', '1yvpBR1hmKtIGmZC_qkPUxNU2oLNGfMbMXRGmOQ3Jt6U');
+                formData.append('timestamp', new Date().toLocaleString('bn-BD'));
+                formData.append('recipient_relation', this.querySelector('input[placeholder*="মা, বাবা"]').value);
+                formData.append('recipient_name', this.querySelector('input[placeholder*="তার নাম"]').value);
+                formData.append('age', this.querySelector('input[placeholder*="২৫"]').value);
+                formData.append('gender', this.querySelector('select').value);
+                formData.append('about_recipient', this.querySelector('textarea[placeholder*="তার পছন্দের জিনিস"]').value);
+                formData.append('budget', this.querySelector('input[placeholder*="৫০০ টাকা"]').value);
+                formData.append('address', this.querySelector('textarea[placeholder*="বিস্তারিত ঠিকানা"]').value);
+                formData.append('phone', this.querySelector('input[placeholder*="০১৭১২৩৪৫৬৭৮"]').value);
 
                 // Google Sheets-এ ডাটা পাঠানো
                 fetch(scriptURL, {
