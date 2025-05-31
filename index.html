@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 গিফট বক্স - আপনার প্রিয়জনদের জন্য স্পেশাল উপহার</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --text-color: #2C3E50;
+            --light-text: #7F8C8D;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .display-4 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .lead {
+            font-size: 1.4rem;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1513885535751-8b9238bd345a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .feature-card {
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            padding: 2.5rem;
+            margin: 1.5rem 0;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--primary-color);
+        }
+
+        .feature-card p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .gift-form {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .gift-form h2 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff5252;
+            border-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            padding: 4rem 0;
+            margin-top: 4rem;
+        }
+
+        footer h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        footer p {
+            color: #ECF0F1;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            color: var(--accent-color) !important;
+        }
+
+        .input-group {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .input-group .form-control {
+            border: none;
+            padding: 1rem;
+        }
+
+        .input-group .btn {
+            padding: 1rem 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            .lead {
+                font-size: 1.2rem;
+            }
+            .hero-section {
+                height: 500px;
+            }
+            .gift-form {
+                padding: 2rem;
+            }
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 1rem 2rem 2rem;
+        }
+
+        .close {
+            color: white;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- নেভিগেশন বার -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">🎁 গিফট বক্স</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#home">হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#how-it-works">কিভাবে কাজ করে</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#order">অর্ডার করুন</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#contact">যোগাযোগ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- হিরো সেকশন -->
+    <section class="hero-section" id="home">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">আপনার প্রিয়জনদের জন্য স্পেশাল উপহার</h1>
+            <p class="lead mb-4">বাজেট অনুযায়ী কাস্টমাইজড গিফট বক্স - আপনার ভালোবাসার প্রকাশ</p>
+            <a href="#order" class="btn btn-primary btn-lg">এখনই অর্ডার করুন</a>
+        </div>
+    </section>
+
+    <!-- ফিচার সেকশন -->
+    <section class="py-5" id="how-it-works">
+        <div class="container">
+            <h2 class="text-center mb-5">আমাদের স্পেশাল সুবিধাগুলো</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card" data-bs-toggle="modal" data-bs-target="#personalizedGiftModal">
+                        <i class="fas fa-gift feature-icon"></i>
+                        <h3>কাস্টমাইজড গিফট</h3>
+                        <p>প্রিয়জনের পছন্দ অনুযায়ী সুন্দর গিফট সাজানো</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" data-bs-toggle="modal" data-bs-target="#aiSuggestionModal">
+                        <i class="fas fa-robot feature-icon"></i>
+                        <h3>স্মার্ট AI সাজেশন</h3>
+                        <p>আর্টিফিশিয়াল ইন্টেলিজেন্স দিয়ে পারফেক্ট গিফট বাছাই</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" data-bs-toggle="modal" data-bs-target="#deliveryModal">
+                        <i class="fas fa-truck feature-icon"></i>
+                        <h3>সুপার ফাস্ট ডেলিভারি</h3>
+                        <p>সহজে এবং নির্ভরযোগ্য ডেলিভারি সার্ভিস</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- অর্ডার ফর্ম -->
+    <section class="py-5 bg-light" id="order">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="gift-form">
+                        <h2 class="text-center mb-4">গিফট অর্ডার ফর্ম</h2>
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">যার জন্য গিফট দিবেন</label>
+                                <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">তার নাম</label>
+                                <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">তার বয়স</label>
+                                <input type="number" class="form-control" placeholder="যেমন: ২৫" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">লিঙ্গ</label>
+                                <select class="form-select" required>
+                                    <option value="">সিলেক্ট করুন</option>
+                                    <option value="male">ছেলে</option>
+                                    <option value="female">মেয়ে</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">তার সম্পর্কে কিছু বলুন</label>
+                                <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">আপনার বাজেট</label>
+                                <input type="number" class="form-control" placeholder="যেমন: ৫০০ টাকা" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ডেলিভারি ঠিকানা</label>
+                                <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">আপনার মোবাইল নম্বর</label>
+                                <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">অর্ডার কনফার্ম করুন</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ফুটার -->
+    <footer id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>আমাদের সাথে যোগাযোগ করুন</h5>
+                    <p>📧 ইমেইল: <a href="mailto:sajidtechsolutions@gmail.com" class="text-white text-decoration-none">sajidtechsolutions@gmail.com</a></p>
+                    <p>📞 ফোন: 01745897322</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>সোশ্যাল মিডিয়ায় আমাদের সাথে থাকুন</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>নতুন আপডেট পেতে সাবস্ক্রাইব করুন</h5>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="আপনার ইমেইল এড্রেস">
+                        <button class="btn btn-primary">সাবস্ক্রাইব</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- অর্ডার কনফার্মেশন মডাল -->
+    <div class="modal fade" id="orderConfirmationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">অর্ডার কনফার্মেশন</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-center mb-4">আপনার অর্ডার সফল হয়েছে!</h4>
+                    <p>পরবর্তী ধাপগুলো:</p>
+                    <ol>
+                        <li>আমরা আপনার দেওয়া তথ্য চেক করব</li>
+                        <li>আপনার ফোনে একটি কনফার্মেশন মেসেজ পাঠাব</li>
+                        <li>আমাদের টিম আপনার গিফট বক্স প্রিপার করবে</li>
+                        <li>ডেলিভারি শুরু হলে আপনাকে জানানো হবে</li>
+                    </ol>
+                    <p class="mt-3">কোন প্রশ্ন থাকলে কল করুন: <strong>01745897322</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ঠিক আছে</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- মডাল -->
+    <div class="modal fade" id="personalizedGiftModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">কাস্টমাইজড গিফট</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>আপনার দেওয়া তথ্য দিয়ে আমরা প্রতিটি গিফট বক্সকে স্পেশাল করে তুলি। আমরা দেখি:</p>
+                    <ul>
+                        <li>যার জন্য গিফট - তার বয়স এবং লিঙ্গ</li>
+                        <li>তার পছন্দের জিনিসগুলো</li>
+                        <li>কোন বিশেষ দিনের জন্য গিফট</li>
+                        <li>আপনার বাজেট কত</li>
+                    </ul>
+                    <p>এই সব তথ্য দেখে আমরা এমন গিফট আইটেম বাছাই করি যা সত্যিই স্পেশাল হবে।</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">বুঝেছি</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="aiSuggestionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">স্মার্ট AI সাজেশন</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>আমাদের স্মার্ট AI সিস্টেম যার জন্য গিফট দিবেন তার সম্পর্কে আপনার দেওয়া তথ্য দেখে। এটি দেখে:</p>
+                    <ul>
+                        <li>তার ব্যক্তিত্ব কেমন</li>
+                        <li>কি ধরনের জিনিস পছন্দ করে</li>
+                        <li>এখন কি ট্রেন্ড চলছে</li>
+                        <li>আপনার বাজেট কত</li>
+                    </ul>
+                    <p>এই সব দেখে AI সিস্টেম এমন গিফট আইটেম সাজেস্ট করে যা পারফেক্ট হবে।</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">বুঝেছি</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deliveryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">সুপার ফাস্ট ডেলিভারি</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>আমাদের ডেলিভারি সার্ভিসের বিশেষত্ব:</p>
+                    <ul>
+                        <li>২৪-৪৮ ঘণ্টার মধ্যে ডেলিভারি</li>
+                        <li>সুন্দর করে প্যাকেজিং</li>
+                        <li>লাইভ ট্র্যাকিং</li>
+                        <li>সহজ রিটার্ন সিস্টেম</li>
+                    </ul>
+                    <p>আমরা নিশ্চিত করি যে আপনার গিফট ঠিকমত এবং সময়মত পৌঁছে যাবে।</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">বুঝেছি</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Google Sheets API URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz6aOCJ4S4-zXqBsjTpu13ies2U0uFcq8RUVlG06p4ISc8KuzEVmFJ4ChhAXumOXZFR/exec';
+
+        // ফর্ম সাবমিশন হ্যান্ডলার
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // ফর্ম ডাটা ভ্যালিডেশন
+            if(this.checkValidity()) {
+                // লোডিং স্টেট
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
+                submitButton.disabled = true;
+
+                // ফর্ম ডাটা সংগ্রহ
+                const formData = new FormData();
+                formData.append('name', this.querySelector('input[placeholder*="তার নাম"]').value);
+                formData.append('email', this.querySelector('input[placeholder*="০১৭১২৩৪৫৬৭৮"]').value);
+                formData.append('message', JSON.stringify({
+                    recipient_relation: this.querySelector('input[placeholder*="মা, বাবা"]').value,
+                    age: this.querySelector('input[placeholder*="২৫"]').value,
+                    gender: this.querySelector('select').value,
+                    about_recipient: this.querySelector('textarea[placeholder*="তার পছন্দের জিনিস"]').value,
+                    budget: this.querySelector('input[placeholder*="৫০০ টাকা"]').value,
+                    address: this.querySelector('textarea[placeholder*="বিস্তারিত ঠিকানা"]').value
+                }));
+                formData.append('sheetId', '1yvpBR1hmKtIGmZC_qkPUxNU2oLNGfMbMXRGmOQ3Jt6U');
+
+                // Google Sheets-এ ডাটা পাঠানো
+                fetch(scriptURL, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // সফল হলে কনফার্মেশন মডাল দেখাও
+                    var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                    orderModal.show();
+                    // ফর্ম রিসেট
+                    this.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+                })
+                .finally(() => {
+                    // লোডিং স্টেট রিসেট
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                });
+            }
+        });
+    </script>
+</body>
+</html> 
