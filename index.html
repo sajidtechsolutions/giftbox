@@ -253,9 +253,134 @@
             color: white;
             opacity: 1;
         }
+
+        /* Add new styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-top: 10px;
+            min-width: 300px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: none;
+        }
+
+        .invalid-feedback {
+            font-size: 0.9rem;
+            color: #dc3545;
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary:disabled {
+            background-color: #ff9b9b;
+            border-color: #ff9b9b;
+            cursor: not-allowed;
+        }
+
+        .form-floating {
+            position: relative;
+        }
+
+        .form-floating > .form-control {
+            height: calc(3.5rem + 2px);
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating > label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding: 1rem 0.75rem;
+            pointer-events: none;
+            border: 1px solid transparent;
+            transform-origin: 0 0;
+            transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+            background-color: white;
+            padding: 0 0.5rem;
+        }
+
+        #googleSignIn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #757575;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #googleSignIn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+
+        #googleSignIn img {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
+    <!-- Add Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Add Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- নেভিগেশন বার -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
@@ -278,7 +403,9 @@
                         <a class="nav-link text-white" href="#contact">যোগাযোগ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="admin.html">অ্যাডমিন</a>
+                        <button class="btn btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#signInModal">
+                            <i class="fas fa-user me-2"></i>সাইন ইন
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -331,22 +458,22 @@
                 <div class="col-md-8">
                     <div class="gift-form">
                         <h2 class="text-center mb-4">গিফট অর্ডার ফর্ম</h2>
-                        <form>
+                        <form id="giftForm">
                             <div class="mb-3">
                                 <label class="form-label">যার জন্য গিফট দিবেন</label>
-                                <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" required>
+                                <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" id="recipientRelation">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">তার নাম</label>
-                                <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" required>
+                                <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" id="recipientName">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">তার বয়স</label>
-                                <input type="number" class="form-control" placeholder="যেমন: ২৫" required>
+                                <input type="number" class="form-control" placeholder="যেমন: ২৫" id="recipientAge">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">লিঙ্গ</label>
-                                <select class="form-select" required>
+                                <select class="form-select" id="recipientGender">
                                     <option value="">সিলেক্ট করুন</option>
                                     <option value="male">ছেলে</option>
                                     <option value="female">মেয়ে</option>
@@ -354,19 +481,19 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">তার সম্পর্কে কিছু বলুন</label>
-                                <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি"></textarea>
+                                <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি" id="aboutRecipient"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">আপনার বাজেট</label>
-                                <input type="number" class="form-control" placeholder="যেমন: ৫০০ টাকা" required>
+                                <input type="number" class="form-control" placeholder="যেমন: ৫০০ টাকা" id="budget">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">ডেলিভারি ঠিকানা</label>
-                                <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" required></textarea>
+                                <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" id="address"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">আপনার মোবাইল নম্বর</label>
-                                <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" required>
+                                <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="phone">
                             </div>
                             <button type="submit" class="btn btn-primary w-100">অর্ডার কনফার্ম করুন</button>
                         </form>
@@ -506,12 +633,117 @@
         </div>
     </div>
 
+    <!-- Modify Sign In Modal -->
+    <div class="modal fade" id="signInModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">সাইন ইন</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid mb-4">
+                        <button class="btn btn-outline-primary" id="googleSignIn">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; margin-right: 10px;">
+                            Google দিয়ে সাইন ইন করুন
+                        </button>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="text-muted">অথবা</span>
+                    </div>
+                    <form id="signInForm">
+                        <div class="mb-3">
+                            <label class="form-label">ইমেইল</label>
+                            <input type="email" class="form-control" id="signInEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড</label>
+                            <input type="password" class="form-control" id="signInPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">সাইন ইন</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">অ্যাকাউন্ট নেই? <a href="#" id="showSignUp">সাইন আপ করুন</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Sign Up Modal -->
+    <div class="modal fade" id="signUpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">সাইন আপ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signUpForm">
+                        <div class="mb-3">
+                            <label class="form-label">নাম</label>
+                            <input type="text" class="form-control" id="signUpName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ইমেইল</label>
+                            <input type="email" class="form-control" id="signUpEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড</label>
+                            <input type="password" class="form-control" id="signUpPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড নিশ্চিত করুন</label>
+                            <input type="password" class="form-control" id="signUpConfirmPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">সাইন আপ</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">অ্যাকাউন্ট আছে? <a href="#" id="showSignIn">সাইন ইন করুন</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Profile Modal -->
+    <div class="modal fade" id="userProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">প্রোফাইল</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        <h4 class="mt-3" id="userName">লোড হচ্ছে...</h4>
+                        <p class="text-muted" id="userEmail">লোড হচ্ছে...</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="viewOrdersBtn">
+                            <i class="fas fa-shopping-bag me-2"></i>আমার অর্ডার
+                        </button>
+                        <button class="btn btn-outline-danger" id="signOutBtn">
+                            <i class="fas fa-sign-out-alt me-2"></i>সাইন আউট
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -528,13 +760,215 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            const signInBtn = document.querySelector('[data-bs-target="#signInModal"]');
+            if (user) {
+                // User is signed in
+                signInBtn.innerHTML = '<i class="fas fa-user me-2"></i>প্রোফাইল';
+                signInBtn.setAttribute('data-bs-target', '#userProfileModal');
+                
+                // Update profile modal
+                document.getElementById('userName').textContent = user.displayName || 'ব্যবহারকারী';
+                document.getElementById('userEmail').textContent = user.email;
+            } else {
+                // User is signed out
+                signInBtn.innerHTML = '<i class="fas fa-user me-2"></i>সাইন ইন';
+                signInBtn.setAttribute('data-bs-target', '#signInModal');
+            }
+        });
+
+        // Google Sign In Handler
+        document.getElementById('googleSignIn').addEventListener('click', function() {
+            showLoading();
+            signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+                    modal.hide();
+                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
+                })
+                .catch((error) => {
+                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        });
+
+        // Sign In Form Handler
+        document.getElementById('signInForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+
+            showLoading();
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+                    modal.hide();
+                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
+                })
+                .catch((error) => {
+                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        });
+
+        // Sign Up Form Handler
+        document.getElementById('signUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast('পাসওয়ার্ড মিলছে না', 'error');
+                return;
+            }
+
+            showLoading();
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Update user profile
+                    const user = userCredential.user;
+                    user.updateProfile({
+                        displayName: name
+                    });
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+                    modal.hide();
+                    showToast('সফলভাবে অ্যাকাউন্ট তৈরি করা হয়েছে');
+                })
+                .catch((error) => {
+                    showToast('সাইন আপ ব্যর্থ হয়েছে: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        });
+
+        // Sign Out Handler
+        document.getElementById('signOutBtn').addEventListener('click', function() {
+            signOut(auth).then(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userProfileModal'));
+                modal.hide();
+                showToast('সফলভাবে সাইন আউট করা হয়েছে');
+            }).catch((error) => {
+                showToast('সাইন আউট ব্যর্থ হয়েছে: ' + error.message, 'error');
+            });
+        });
+
+        // Modal Switch Handlers
+        document.getElementById('showSignUp').addEventListener('click', function(e) {
+            e.preventDefault();
+            const signInModal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+            signInModal.hide();
+            const signUpModal = new bootstrap.Modal(document.getElementById('signUpModal'));
+            signUpModal.show();
+        });
+
+        document.getElementById('showSignIn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const signUpModal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+            signUpModal.hide();
+            const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
+            signInModal.show();
+        });
+
+        // View Orders Handler
+        document.getElementById('viewOrdersBtn').addEventListener('click', function() {
+            // TODO: Implement order history view
+            showToast('শীঘ্রই আসছে...', 'error');
+        });
+
+        // Show loading state
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.opacity = '1';
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast show`;
+            toast.innerHTML = `
+                <div class="toast-header ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white">
+                    <strong class="me-auto">${type === 'success' ? 'সফল' : 'ত্রুটি'}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Validate phone number
+        function validatePhone(phone) {
+            const phoneRegex = /^(?:\+88|88)?(01[3-9]\d{8})$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Validate budget
+        function validateBudget(budget) {
+            return !isNaN(budget) && budget > 0;
+        }
 
         // ফর্ম সাবমিশন হ্যান্ডলার
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('giftForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const budgetInput = document.getElementById('budget');
+            
+            // Check for secret admin code
+            if (budgetInput.value === "511301") {
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // Validate form
+            const phone = document.getElementById('phone').value;
+            const budget = budgetInput.value;
+
+            if (!validatePhone(phone)) {
+                showToast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'error');
+                return;
+            }
+
+            if (!validateBudget(budget)) {
+                showToast('সঠিক বাজেট দিন', 'error');
+                return;
+            }
+            
+            // Add required attributes for normal form submission
+            const requiredFields = ['recipientRelation', 'recipientName', 'recipientAge', 'recipientGender', 'budget', 'address', 'phone'];
+            requiredFields.forEach(fieldId => {
+                document.getElementById(fieldId).setAttribute('required', '');
+            });
             
             // ফর্ম ডাটা ভ্যালিডেশন
             if(this.checkValidity()) {
+                showLoading();
                 // লোডিং স্টেট
                 const submitButton = this.querySelector('button[type="submit"]');
                 const originalText = submitButton.innerHTML;
@@ -544,14 +978,14 @@
                 // ফর্ম ডাটা সংগ্রহ
                 const orderData = {
                     timestamp: new Date().toLocaleString('bn-BD'),
-                    recipient_relation: this.querySelector('input[placeholder*="মা, বাবা"]').value,
-                    recipient_name: this.querySelector('input[placeholder*="তার নাম"]').value,
-                    age: this.querySelector('input[placeholder*="২৫"]').value,
-                    gender: this.querySelector('select').value,
-                    about_recipient: this.querySelector('textarea[placeholder*="তার পছন্দের জিনিস"]').value,
-                    budget: this.querySelector('input[placeholder*="৫০০ টাকা"]').value,
-                    address: this.querySelector('textarea[placeholder*="বিস্তারিত ঠিকানা"]').value,
-                    phone: this.querySelector('input[placeholder*="০১৭১২৩৪৫৬৭৮"]').value,
+                    recipient_relation: document.getElementById('recipientRelation').value,
+                    recipient_name: document.getElementById('recipientName').value,
+                    age: document.getElementById('recipientAge').value,
+                    gender: document.getElementById('recipientGender').value,
+                    about_recipient: document.getElementById('aboutRecipient').value,
+                    budget: document.getElementById('budget').value,
+                    address: document.getElementById('address').value,
+                    phone: document.getElementById('phone').value,
                     status: 'pending'
                 };
 
@@ -559,21 +993,40 @@
                 const ordersRef = ref(database, 'orders');
                 push(ordersRef, orderData)
                     .then(() => {
-                    // সফল হলে কনফার্মেশন মডাল দেখাও
-                    var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
-                    orderModal.show();
-                    // ফর্ম রিসেট
-                    this.reset();
-                })
+                        // সফল হলে কনফার্মেশন মডাল দেখাও
+                        var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                        orderModal.show();
+                        // ফর্ম রিসেট
+                        this.reset();
+                        showToast('অর্ডার সফল হয়েছে!');
+                    })
                     .catch((error) => {
-                    console.error('Error:', error);
-                    alert('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।');
-                })
-                .finally(() => {
-                    // লোডিং স্টেট রিসেট
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
-                });
+                        console.error('Error:', error);
+                        showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
+                    })
+                    .finally(() => {
+                        // লোডিং স্টেট রিসেট
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                        hideLoading();
+                    });
+            }
+        });
+
+        // Add input validation listeners
+        document.getElementById('phone').addEventListener('input', function() {
+            if (this.value && !validatePhone(this.value)) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+
+        document.getElementById('budget').addEventListener('input', function() {
+            if (this.value && !validateBudget(this.value)) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
             }
         });
     </script>
