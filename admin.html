@@ -986,7 +986,7 @@
                     matchesSearch = 
                         order.recipient_name.toLowerCase().includes(searchTerm) ||
                         order.phone.includes(searchTerm) ||
-                        order.address.toLowerCase().includes(searchTerm);
+                        order.delivery_address.toLowerCase().includes(searchTerm);
                 }
 
                 if (statusFilter) {
@@ -1132,35 +1132,100 @@
             }
             
             detailsContent.innerHTML = `
-                <div class="order-id">
+                <div class="order-id mb-3">
                     <strong>অর্ডার আইডি:</strong> ${orderId}
                 </div>
                 
-                <div class="personal-info">
-                    <p><strong>প্রাপক:</strong> ${order.recipient_name}</p>
-                    <p><strong>সম্পর্ক:</strong> ${order.recipient_relation}</p>
-                    <p><strong>বয়স:</strong> ${order.age}</p>
-                    <p><strong>লিঙ্গ:</strong> ${order.gender}</p>
+                <!-- গিফট সাজেশন এর জন্য প্রাপকের তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">প্রাপকের তথ্য (গিফট সাজেশন এর জন্য)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="copy-section p-3 bg-light rounded mb-3">
+                            <p class="mb-2"><strong>প্রাপক:</strong> ${order.recipient_name}</p>
+                            <p class="mb-2"><strong>সম্পর্ক:</strong> ${order.recipient_relation}</p>
+                            <p class="mb-2"><strong>বয়স:</strong> ${order.age}</p>
+                            <p class="mb-2"><strong>লিঙ্গ:</strong> ${order.gender === 'male' ? 'ছেলে' : 'মেয়ে'}</p>
+                            <p class="mb-2"><strong>বাজেট:</strong> ${order.budget} টাকা</p>
+                            ${order.about_recipient ? `<p class="mb-2"><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>` : ''}
+                            <button class="btn btn-sm btn-primary copy-btn" onclick="copyGiftInfo(this)">
+                                <i class="fas fa-copy"></i> তথ্য কপি করুন
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="contact-info">
-                    <p><strong>ঠিকানা:</strong> ${order.address}</p>
-                    <p><strong>ফোন:</strong> ${order.phone}</p>
+                <!-- ডেলিভারি তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">ডেলিভারি তথ্য</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>ডেলিভারি টাইপ:</strong> ${order.delivery_type === 'self' ? 'নিজের কাছে' : 'সরাসরি প্রাপকের কাছে'}</p>
+                        <p><strong>যার কাছে পাঠাবেন:</strong> ${order.receiver_name}</p>
+                        <p><strong>ঠিকানা:</strong> ${order.delivery_address || 'উল্লেখ করা হয়নি'}</p>
+                        <p><strong>ফোন নম্বর:</strong> ${order.delivery_phone || 'উল্লেখ করা হয়নি'}</p>
+                    </div>
                 </div>
 
-                <p><strong>বাজেট:</strong> <span class="budget">${order.budget} টাকা</span></p>
-                <p><strong>তারিখ:</strong> <span class="date-time">${order.timestamp}</span></p>
-                
-                <div class="about-section">
-                    <p><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>
+                <!-- পেমেন্ট তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">পেমেন্ট তথ্য</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>পেমেন্ট মেথড:</strong> ${
+                            order.payment_method === 'cash_on_delivery' ? 'ডেলিভারি ম্যানকে টাকা দিবেন' :
+                            order.payment_method === 'bkash' ? 'বিকাশ' :
+                            order.payment_method === 'nagad' ? 'নগদ' :
+                            order.payment_method === 'rocket' ? 'রকেট' : order.payment_method
+                        }</p>
+                        ${order.mobile_banking_number ? `<p><strong>মোবাইল ব্যাংকিং নম্বর:</strong> ${order.mobile_banking_number}</p>` : ''}
+                    </div>
                 </div>
 
-                <p><strong>বর্তমান স্ট্যাটাস:</strong> <span class="status-badge">${getStatusInBengali(order.status)}</span></p>
+                <!-- অর্ডার স্ট্যাটাস -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">অর্ডার স্ট্যাটাস</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>বর্তমান স্ট্যাটাস:</strong> <span class="status-badge status-${order.status}">${getStatusInBengali(order.status)}</span></p>
+                        <p><strong>অর্ডার তারিখ:</strong> ${order.timestamp}</p>
+                    </div>
+                </div>
+
                 ${statusHistoryHtml}
             `;
 
             const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
             modal.show();
+        };
+
+        // কপি ফাংশন
+        window.copyGiftInfo = function(button) {
+            const section = button.closest('.copy-section');
+            const text = Array.from(section.querySelectorAll('p'))
+                .map(p => p.textContent.trim())
+                .join('\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success message
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> কপি করা হয়েছে';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('কপি করতে সমস্যা হয়েছে');
+            });
         };
 
         // Helper function to get Bengali status text
