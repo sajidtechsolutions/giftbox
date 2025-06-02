@@ -43,14 +43,14 @@
 
         .navbar {
             background-color: var(--primary-color);
-            padding: 1rem 0;
+            padding: 0.5rem 1rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .navbar-brand {
             color: white !important;
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 700;
             letter-spacing: 0.5px;
         }
 
@@ -370,6 +370,38 @@
         #googleSignIn img {
             margin-right: 10px;
         }
+
+        .btn-outline-light {
+            border-width: 2px;
+            font-weight: 500;
+            padding: 0.375rem 1rem;
+        }
+
+        .navbar-toggler {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background-color: var(--primary-color);
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .navbar-nav {
+                margin-top: 0.5rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -385,9 +417,14 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">🎁 গিফট বক্স</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#signInModal">
+                    <i class="fas fa-user me-2"></i>সাইন ইন
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -401,11 +438,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#contact">যোগাযোগ</a>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#signInModal">
-                            <i class="fas fa-user me-2"></i>সাইন ইন
-                        </button>
                     </li>
                 </ul>
             </div>
@@ -641,69 +673,15 @@
                     <h5 class="modal-title">সাইন ইন</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="d-grid mb-4">
+                <div class="modal-body text-center">
+                    <div class="mb-4">
+                        <p class="lead">Google দিয়ে সাইন ইন করুন</p>
+                    </div>
+                    <div class="d-grid">
                         <button class="btn btn-outline-primary" id="googleSignIn">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; margin-right: 10px;">
                             Google দিয়ে সাইন ইন করুন
                         </button>
-                    </div>
-                    <div class="text-center mb-4">
-                        <span class="text-muted">অথবা</span>
-                    </div>
-                    <form id="signInForm">
-                        <div class="mb-3">
-                            <label class="form-label">ইমেইল</label>
-                            <input type="email" class="form-control" id="signInEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">পাসওয়ার্ড</label>
-                            <input type="password" class="form-control" id="signInPassword" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">সাইন ইন</button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p class="mb-0">অ্যাকাউন্ট নেই? <a href="#" id="showSignUp">সাইন আপ করুন</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Sign Up Modal -->
-    <div class="modal fade" id="signUpModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">সাইন আপ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="signUpForm">
-                        <div class="mb-3">
-                            <label class="form-label">নাম</label>
-                            <input type="text" class="form-control" id="signUpName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">ইমেইল</label>
-                            <input type="email" class="form-control" id="signUpEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">পাসওয়ার্ড</label>
-                            <input type="password" class="form-control" id="signUpPassword" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">পাসওয়ার্ড নিশ্চিত করুন</label>
-                            <input type="password" class="form-control" id="signUpConfirmPassword" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">সাইন আপ</button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p class="mb-0">অ্যাকাউন্ট আছে? <a href="#" id="showSignIn">সাইন ইন করুন</a></p>
                     </div>
                 </div>
             </div>
@@ -743,7 +721,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getAuth, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -762,6 +740,12 @@
         const database = getDatabase(app);
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
+        
+        // Configure Google Provider
+        googleProvider.setCustomParameters({
+            client_id: '171712833751-1315ff9ss51me9u5rq40mh41esm5fkci.apps.googleusercontent.com',
+            prompt: 'select_account'
+        });
 
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
@@ -786,67 +770,29 @@
             showLoading();
             signInWithPopup(auth, googleProvider)
                 .then((result) => {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
-                    modal.hide();
-                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
-                })
-                .catch((error) => {
-                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    hideLoading();
-                });
-        });
-
-        // Sign In Form Handler
-        document.getElementById('signInForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('signInEmail').value;
-            const password = document.getElementById('signInPassword').value;
-
-            showLoading();
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
-                    modal.hide();
-                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
-                })
-                .catch((error) => {
-                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    hideLoading();
-                });
-        });
-
-        // Sign Up Form Handler
-        document.getElementById('signUpForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('signUpName').value;
-            const email = document.getElementById('signUpEmail').value;
-            const password = document.getElementById('signUpPassword').value;
-            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
-
-            if (password !== confirmPassword) {
-                showToast('পাসওয়ার্ড মিলছে না', 'error');
-                return;
-            }
-
-            showLoading();
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Update user profile
-                    const user = userCredential.user;
-                    user.updateProfile({
-                        displayName: name
-                    });
+                    // Get user info
+                    const user = result.user;
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
                     
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+                    // Update UI
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
                     modal.hide();
-                    showToast('সফলভাবে অ্যাকাউন্ট তৈরি করা হয়েছে');
+                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
                 })
                 .catch((error) => {
-                    showToast('সাইন আপ ব্যর্থ হয়েছে: ' + error.message, 'error');
+                    // Handle errors
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    
+                    // Show specific message for unauthorized domain
+                    if (errorCode === 'auth/unauthorized-domain') {
+                        showToast('এই ডোমেইন থেকে সাইন ইন করা যাবে না। অনুগ্রহ করে Firebase Console থেকে ডোমেইন অথরাইজ করুন।', 'error');
+                    } else {
+                        showToast('সাইন ইন ব্যর্থ হয়েছে: ' + errorMessage, 'error');
+                    }
+                    
+                    console.error('Google Sign In Error:', errorCode, errorMessage);
                 })
                 .finally(() => {
                     hideLoading();
@@ -862,23 +808,6 @@
             }).catch((error) => {
                 showToast('সাইন আউট ব্যর্থ হয়েছে: ' + error.message, 'error');
             });
-        });
-
-        // Modal Switch Handlers
-        document.getElementById('showSignUp').addEventListener('click', function(e) {
-            e.preventDefault();
-            const signInModal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
-            signInModal.hide();
-            const signUpModal = new bootstrap.Modal(document.getElementById('signUpModal'));
-            signUpModal.show();
-        });
-
-        document.getElementById('showSignIn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const signUpModal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
-            signUpModal.hide();
-            const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
-            signInModal.show();
         });
 
         // View Orders Handler
@@ -968,14 +897,40 @@
             
             // ফর্ম ডাটা ভ্যালিডেশন
             if(this.checkValidity()) {
-                showLoading();
-                // লোডিং স্টেট
-                const submitButton = this.querySelector('button[type="submit"]');
-                const originalText = submitButton.innerHTML;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
-                submitButton.disabled = true;
-
-                // ফর্ম ডাটা সংগ্রহ
+                // Check if user is signed in
+                const user = auth.currentUser;
+                
+                if (!user) {
+                    // User is not signed in, show sign in modal
+                    const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
+                    signInModal.show();
+                    
+                    // Store form data temporarily
+                    const formData = {
+                        recipient_relation: document.getElementById('recipientRelation').value,
+                        recipient_name: document.getElementById('recipientName').value,
+                        age: document.getElementById('recipientAge').value,
+                        gender: document.getElementById('recipientGender').value,
+                        about_recipient: document.getElementById('aboutRecipient').value,
+                        budget: document.getElementById('budget').value,
+                        address: document.getElementById('address').value,
+                        phone: document.getElementById('phone').value,
+                        status: 'pending'
+                    };
+                    
+                    // Listen for successful sign in
+                    const unsubscribe = onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            // User signed in successfully, proceed with order
+                            unsubscribe(); // Remove the listener
+                            submitOrder(formData);
+                        }
+                    });
+                    
+                    return;
+                }
+                
+                // User is already signed in, proceed with order
                 const orderData = {
                     timestamp: new Date().toLocaleString('bn-BD'),
                     recipient_relation: document.getElementById('recipientRelation').value,
@@ -986,32 +941,46 @@
                     budget: document.getElementById('budget').value,
                     address: document.getElementById('address').value,
                     phone: document.getElementById('phone').value,
-                    status: 'pending'
+                    status: 'pending',
+                    user_id: user.uid,
+                    user_email: user.email
                 };
-
-                // Firebase-এ ডাটা সেভ করা
-                const ordersRef = ref(database, 'orders');
-                push(ordersRef, orderData)
-                    .then(() => {
-                        // সফল হলে কনফার্মেশন মডাল দেখাও
-                        var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
-                        orderModal.show();
-                        // ফর্ম রিসেট
-                        this.reset();
-                        showToast('অর্ডার সফল হয়েছে!');
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
-                    })
-                    .finally(() => {
-                        // লোডিং স্টেট রিসেট
-                        submitButton.innerHTML = originalText;
-                        submitButton.disabled = false;
-                        hideLoading();
-                    });
+                
+                submitOrder(orderData);
             }
         });
+
+        // Function to submit order
+        function submitOrder(orderData) {
+            showLoading();
+            // লোডিং স্টেট
+            const submitButton = document.querySelector('#giftForm button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
+            submitButton.disabled = true;
+
+            // Firebase-এ ডাটা সেভ করা
+            const ordersRef = ref(database, 'orders');
+            push(ordersRef, orderData)
+                .then(() => {
+                    // সফল হলে কনফার্মেশন মডাল দেখাও
+                    var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                    orderModal.show();
+                    // ফর্ম রিসেট
+                    document.getElementById('giftForm').reset();
+                    showToast('অর্ডার সফল হয়েছে!');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
+                })
+                .finally(() => {
+                    // লোডিং স্টেট রিসেট
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    hideLoading();
+                });
+        }
 
         // Add input validation listeners
         document.getElementById('phone').addEventListener('input', function() {
