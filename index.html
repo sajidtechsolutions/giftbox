@@ -1119,7 +1119,7 @@
             // ফর্ম ডাটা ভ্যালিডেশন
             if(this.checkValidity()) {
                 // Store form data
-                pendingOrderData = {
+                const orderData = {
                     timestamp: new Date().toLocaleString('bn-BD'),
                     // প্রাপকের তথ্য
                     recipient_relation: document.getElementById('recipientRelation').value,
@@ -1144,14 +1144,55 @@
                     payment_method: document.getElementById('paymentMethod').value,
                     mobile_banking_number: convertBengaliToEnglish(document.getElementById('mobileBankingNumber').value),
                     
-                    status: 'pending'
+                    status: 'pending',
+                    status_history: [{
+                        status: 'pending',
+                        timestamp: new Date().toLocaleString('bn-BD'),
+                        changed_by: 'system'
+                    }]
                 };
 
                 // Check if user is signed in
                 const user = auth.currentUser;
                 if (user) {
-                    // User is signed in, proceed with order
-                    submitOrder(pendingOrderData);
+                    // Add user information to order data
+                    orderData.user_id = user.uid;
+                    orderData.user_email = user.email;
+                    
+                    // Show loading state
+                    showLoading();
+                    const submitButton = document.querySelector('#giftForm button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
+                    submitButton.disabled = true;
+
+                    // Save to Firebase Realtime Database
+                    const ordersRef = ref(database, 'orders');
+                    push(ordersRef, orderData)
+                        .then(() => {
+                            // Show success message
+                            showToast('অর্ডার সফল হয়েছে!');
+                            
+                            // Show confirmation modal
+                            const orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                            orderModal.show();
+                            
+                            // Reset form
+                            document.getElementById('giftForm').reset();
+                            
+                            // Hide mobile banking fields
+                            document.getElementById('mobileBankingFields').style.display = 'none';
+                        })
+                        .catch((error) => {
+                            console.error('Error saving order:', error);
+                            showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
+                        })
+                        .finally(() => {
+                            // Reset loading state
+                            submitButton.innerHTML = originalText;
+                            submitButton.disabled = false;
+                            hideLoading();
+                        });
                 } else {
                     // User is not signed in, show sign in modal
                     const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
@@ -1564,6 +1605,104 @@
                 e.preventDefault();
             }
         });
+
+        // অর্ডার বিস্তারিত দেখার ফাংশন
+        window.showOrderDetails = function(orderId) {
+            const order = allOrders[orderId];
+            const detailsContent = document.getElementById('orderDetailsContent');
+            
+            // Create status history HTML
+            let statusHistoryHtml = '';
+            if (order.status_history && order.status_history.length > 0) {
+                statusHistoryHtml = `
+                    <div class="status-history mt-4">
+                        <h6 class="mb-3">স্ট্যাটাস ইতিহাস</h6>
+                        <div class="timeline">
+                            ${order.status_history.map(history => `
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">${getStatusInBengali(history.status)}</h6>
+                                        <p class="mb-0 text-muted">
+                                            <small>${history.timestamp}</small>
+                                            <br>
+                                            <small>আপডেট করেছেন: ${history.changed_by}</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailsContent.innerHTML = `
+                <div class="order-id mb-4">
+                    <strong>অর্ডার আইডি:</strong> ${orderId}
+                </div>
+                
+                <!-- প্রাপকের তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">১. যার জন্য গিফট</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>নাম:</strong> ${order.recipient_name}</p>
+                        <p><strong>সম্পর্ক:</strong> ${order.recipient_relation}</p>
+                        <p><strong>বয়স:</strong> ${order.age}</p>
+                        <p><strong>লিঙ্গ:</strong> ${order.gender === 'male' ? 'ছেলে' : 'মেয়ে'}</p>
+                        <p><strong>উপলক্ষ:</strong> ${order.occasion || 'উল্লেখ করা হয়নি'}</p>
+                        <p><strong>বাজেট:</strong> ${order.budget} টাকা</p>
+                        ${order.about_recipient ? `<p><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>` : ''}
+                    </div>
+                </div>
+
+                <!-- ডেলিভারি তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">২. ডেলিভারি তথ্য</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>ডেলিভারি টাইপ:</strong> ${order.delivery_type === 'self' ? 'নিজের কাছে' : 'সরাসরি প্রাপকের কাছে'}</p>
+                        <p><strong>যার কাছে পাঠাবেন:</strong> ${order.receiver_name}</p>
+                        <p><strong>ঠিকানা:</strong> ${order.delivery_address}</p>
+                        <p><strong>ফোন নম্বর:</strong> ${order.delivery_phone}</p>
+                    </div>
+                </div>
+
+                <!-- পেমেন্ট তথ্য -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">৩. পেমেন্ট তথ্য</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>পেমেন্ট মেথড:</strong> ${
+                            order.payment_method === 'cash_on_delivery' ? 'ডেলিভারি ম্যানকে টাকা দিবেন' :
+                            order.payment_method === 'bkash' ? 'বিকাশ' :
+                            order.payment_method === 'nagad' ? 'নগদ' :
+                            order.payment_method === 'rocket' ? 'রকেট' : order.payment_method
+                        }</p>
+                        ${order.mobile_banking_number ? `<p><strong>মোবাইল ব্যাংকিং নম্বর:</strong> ${order.mobile_banking_number}</p>` : ''}
+                    </div>
+                </div>
+
+                <!-- অর্ডার স্ট্যাটাস -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">অর্ডার স্ট্যাটাস</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>বর্তমান স্ট্যাটাস:</strong> <span class="status-badge status-${order.status}">${getStatusInBengali(order.status)}</span></p>
+                        <p><strong>অর্ডার তারিখ:</strong> ${order.timestamp}</p>
+                    </div>
+                </div>
+
+                ${statusHistoryHtml}
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            modal.show();
+        };
     </script>
 </body>
 </html> 
