@@ -43,14 +43,14 @@
 
         .navbar {
             background-color: var(--primary-color);
-            padding: 0.5rem 1rem;
+            padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .navbar-brand {
             color: white !important;
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: 800;
             letter-spacing: 0.5px;
         }
 
@@ -371,36 +371,82 @@
             margin-right: 10px;
         }
 
-        .btn-outline-light {
-            border-width: 2px;
+        /* Add styles for orders list */
+        .orders-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .order-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 0.375rem 1rem;
         }
 
-        .navbar-toggler {
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            padding: 0.25rem 0.5rem;
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-preparing { background: #cce5ff; color: #004085; }
+        .status-shipped { background: #e2e3e5; color: #383d41; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .status-completed { background: #d1e7dd; color: #0f5132; }
+        .status-on-hold { background: #f8d7da; color: #721c24; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-refunded { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+
+        .order-details {
+            font-size: 0.9rem;
         }
 
-        .navbar-toggler:focus {
-            box-shadow: none;
+        .order-details p {
+            margin-bottom: 5px;
         }
 
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                background-color: var(--primary-color);
-                padding: 1rem;
-                border-radius: 0.5rem;
-                margin-top: 0.5rem;
-            }
+        .order-details strong {
+            color: #666;
+        }
 
-            .navbar-nav {
-                margin-top: 0.5rem;
-            }
+        .cancel-order-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
 
-            .nav-link {
-                padding: 0.5rem 0;
-            }
+        .cancel-order-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -417,14 +463,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">🎁 গিফট বক্স</a>
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#signInModal">
-                    <i class="fas fa-user me-2"></i>সাইন ইন
-                </button>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -438,6 +479,11 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#contact">যোগাযোগ</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#signInModal">
+                            <i class="fas fa-user me-2"></i>সাইন ইন
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -491,42 +537,117 @@
                     <div class="gift-form">
                         <h2 class="text-center mb-4">গিফট অর্ডার ফর্ম</h2>
                         <form id="giftForm">
+                            <!-- যার জন্য গিফট -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">১. যার জন্য গিফট দিবেন</h5>
+                                </div>
+                                <div class="card-body">
                             <div class="mb-3">
-                                <label class="form-label">যার জন্য গিফট দিবেন</label>
-                                <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" id="recipientRelation">
+                                        <label class="form-label">আপনার সাথে সম্পর্ক</label>
+                                        <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" id="recipientRelation">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">তার নাম</label>
-                                <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" id="recipientName">
+                                        <label class="form-label">নাম</label>
+                                        <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" id="recipientName">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">তার বয়স</label>
-                                <input type="number" class="form-control" placeholder="যেমন: ২৫" id="recipientAge">
+                                        <label class="form-label">বয়স</label>
+                                        <input type="number" class="form-control" placeholder="যেমন: ২৫" id="recipientAge">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">লিঙ্গ</label>
-                                <select class="form-select" id="recipientGender">
+                                        <label class="form-label">জেন্ডার</label>
+                                        <select class="form-select" id="recipientGender">
                                     <option value="">সিলেক্ট করুন</option>
                                     <option value="male">ছেলে</option>
                                     <option value="female">মেয়ে</option>
                                 </select>
                             </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">উপলক্ষ</label>
+                                        <input type="text" class="form-control" placeholder="যেমন: জন্মদিন, বিবাহ বার্ষিকী, ইত্যাদি" id="occasion">
+                                    </div>
                             <div class="mb-3">
                                 <label class="form-label">তার সম্পর্কে কিছু বলুন</label>
-                                <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি" id="aboutRecipient"></textarea>
+                                        <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি" id="aboutRecipient"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">আপনার বাজেট</label>
-                                <input type="number" class="form-control" placeholder="যেমন: ৫০০ টাকা" id="budget">
+                                        <label class="form-label">কত টাকার গিফট চান?</label>
+                                        <input type="number" class="form-control" placeholder="যেমন: ৫০০ টাকা" id="budget">
+                            </div>
+                                </div>
+                            </div>
+
+                            <!-- আপনার তথ্য -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">২. আপনার তথ্য</h5>
+                                </div>
+                                <div class="card-body">
+                            <div class="mb-3">
+                                        <label class="form-label">আপনার নাম</label>
+                                        <input type="text" class="form-control" placeholder="আপনার পূর্ণ নাম" id="senderName">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">ডেলিভারি ঠিকানা</label>
-                                <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" id="address"></textarea>
+                                        <label class="form-label">মোবাইল নম্বর</label>
+                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="senderPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">আপনার মোবাইল নম্বর</label>
-                                <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="phone">
+                                </div>
                             </div>
+
+                            <!-- ডেলিভারি তথ্য -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">৩. কোথায় পাঠাবেন?</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">কোথায় পাঠাবেন?</label>
+                                        <select class="form-select" id="deliveryType">
+                                            <option value="">সিলেক্ট করুন</option>
+                                            <option value="self">নিজের কাছে</option>
+                                            <option value="recipient">সরাসরি যার জন্য গিফট তার কাছে</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">যার কাছে পাঠাবেন তার নাম</label>
+                                        <input type="text" class="form-control" placeholder="যার কাছে গিফট পাঠাবেন তার নাম" id="receiverName">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">ঠিকানা</label>
+                                        <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" id="deliveryAddress"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">ফোন নম্বর</label>
+                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="deliveryPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- পেমেন্ট -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">৪. পেমেন্ট</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">কিভাবে পেমেন্ট করবেন?</label>
+                                        <select class="form-select" id="paymentMethod">
+                                            <option value="">সিলেক্ট করুন</option>
+                                            <option value="cash_on_delivery">ডেলিভারি ম্যানকে টাকা দিবেন</option>
+                                            <option value="bkash">বিকাশ</option>
+                                            <option value="nagad">নগদ</option>
+                                            <option value="rocket">রকেট</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3" id="mobileBankingFields" style="display: none;">
+                                        <label class="form-label">মোবাইল ব্যাংকিং নম্বর</label>
+                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="mobileBankingNumber" pattern="[0-9]*" inputmode="numeric" maxlength="11">
+                                        <div class="form-text" id="paymentInstructions"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn btn-primary w-100">অর্ডার কনফার্ম করুন</button>
                         </form>
                     </div>
@@ -673,15 +794,69 @@
                     <h5 class="modal-title">সাইন ইন</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <div class="mb-4">
-                        <p class="lead">Google দিয়ে সাইন ইন করুন</p>
-                    </div>
-                    <div class="d-grid">
+                <div class="modal-body">
+                    <div class="d-grid mb-4">
                         <button class="btn btn-outline-primary" id="googleSignIn">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; margin-right: 10px;">
                             Google দিয়ে সাইন ইন করুন
                         </button>
+                    </div>
+                    <div class="text-center mb-4">
+                        <span class="text-muted">অথবা</span>
+                    </div>
+                    <form id="signInForm">
+                        <div class="mb-3">
+                            <label class="form-label">ইমেইল</label>
+                            <input type="email" class="form-control" id="signInEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড</label>
+                            <input type="password" class="form-control" id="signInPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">সাইন ইন</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">অ্যাকাউন্ট নেই? <a href="#" id="showSignUp">সাইন আপ করুন</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Sign Up Modal -->
+    <div class="modal fade" id="signUpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">সাইন আপ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signUpForm">
+                        <div class="mb-3">
+                            <label class="form-label">নাম</label>
+                            <input type="text" class="form-control" id="signUpName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ইমেইল</label>
+                            <input type="email" class="form-control" id="signUpEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড</label>
+                            <input type="password" class="form-control" id="signUpPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">পাসওয়ার্ড নিশ্চিত করুন</label>
+                            <input type="password" class="form-control" id="signUpConfirmPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">সাইন আপ</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">অ্যাকাউন্ট আছে? <a href="#" id="showSignIn">সাইন ইন করুন</a></p>
                     </div>
                 </div>
             </div>
@@ -715,13 +890,41 @@
         </div>
     </div>
 
+    <!-- Add My Orders Modal -->
+    <div class="modal fade" id="myOrdersModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">আমার অর্ডার</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="ordersList" class="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                    <div id="noOrders" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h5>কোন অর্ডার নেই</h5>
+                        <p class="text-muted">আপনার প্রথম অর্ডার করুন</p>
+                    </div>
+                    <div id="ordersLoading" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">লোড হচ্ছে...</span>
+                        </div>
+                        <p class="mt-2">অর্ডার লোড হচ্ছে...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        import { getAuth, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getDatabase, ref, push, set, query, orderByChild, equalTo, get, onValue, off, update } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -740,12 +943,265 @@
         const database = getDatabase(app);
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
-        
+
         // Configure Google Provider
         googleProvider.setCustomParameters({
-            client_id: '171712833751-1315ff9ss51me9u5rq40mh41esm5fkci.apps.googleusercontent.com',
             prompt: 'select_account'
         });
+
+        // Store form data temporarily
+        let pendingOrderData = null;
+
+        // Function to convert Bengali numbers to English
+        function convertBengaliToEnglish(input) {
+            const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            
+            let result = input;
+            bengaliNumbers.forEach((num, index) => {
+                result = result.replace(new RegExp(num, 'g'), englishNumbers[index]);
+            });
+            return result;
+        }
+
+        // Add event listeners for mobile number and budget fields
+        const numericInputs = ['senderPhone', 'deliveryPhone', 'mobileBankingNumber', 'budget'];
+        numericInputs.forEach(id => {
+            const input = document.getElementById(id);
+            input.addEventListener('input', function(e) {
+                this.value = convertBengaliToEnglish(this.value);
+            });
+            input.addEventListener('keypress', function(e) {
+                if (e.key < '0' || e.key > '9') {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Add payment method change handler
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const mobileBankingFields = document.getElementById('mobileBankingFields');
+            const paymentInstructions = document.getElementById('paymentInstructions');
+            const mobileBankingNumber = document.getElementById('mobileBankingNumber');
+            
+            if (this.value === 'bkash') {
+                mobileBankingFields.style.display = 'block';
+                paymentInstructions.innerHTML = `
+                    <div class="alert alert-info mt-2">
+                        <strong>বিকাশ পেমেন্ট নির্দেশনা:</strong><br>
+                        ১. বিকাশ অ্যাপে যান<br>
+                        ২. "Send Money" অপশন সিলেক্ট করুন<br>
+                        ৩. নিচের নম্বরে টাকা পাঠান:<br>
+                        <strong>০১৭৪৫৮৯৭৩২২</strong><br>
+                        ৪. রেফারেন্স হিসেবে আপনার নাম লিখুন<br>
+                        ৫. পেমেন্ট স্লিপ সেভ করে রাখুন
+                    </div>
+                `;
+                mobileBankingNumber.placeholder = "আপনার বিকাশ নম্বর দিন";
+            } else if (this.value === 'nagad') {
+                mobileBankingFields.style.display = 'block';
+                paymentInstructions.innerHTML = `
+                    <div class="alert alert-info mt-2">
+                        <strong>নগদ পেমেন্ট নির্দেশনা:</strong><br>
+                        ১. নগদ অ্যাপে যান<br>
+                        ২. "Send Money" অপশন সিলেক্ট করুন<br>
+                        ৩. নিচের নম্বরে টাকা পাঠান:<br>
+                        <strong>০১৭৪৫৮৯৭৩২২</strong><br>
+                        ৪. রেফারেন্স হিসেবে আপনার নাম লিখুন<br>
+                        ৫. পেমেন্ট স্লিপ সেভ করে রাখুন
+                    </div>
+                `;
+                mobileBankingNumber.placeholder = "আপনার নগদ নম্বর দিন";
+            } else if (this.value === 'rocket') {
+                mobileBankingFields.style.display = 'block';
+                paymentInstructions.innerHTML = `
+                    <div class="alert alert-info mt-2">
+                        <strong>রকেট পেমেন্ট নির্দেশনা:</strong><br>
+                        ১. রকেট অ্যাপে যান<br>
+                        ২. "Send Money" অপশন সিলেক্ট করুন<br>
+                        ৩. নিচের নম্বরে টাকা পাঠান:<br>
+                        <strong>০১৭৪৫৮৯৭৩২২</strong><br>
+                        ৪. রেফারেন্স হিসেবে আপনার নাম লিখুন<br>
+                        ৫. পেমেন্ট স্লিপ সেভ করে রাখুন
+                    </div>
+                `;
+                mobileBankingNumber.placeholder = "আপনার রকেট নম্বর দিন";
+            } else {
+                mobileBankingFields.style.display = 'none';
+                paymentInstructions.innerHTML = '';
+            }
+        });
+
+        // Add delivery type change handler
+        document.getElementById('deliveryType').addEventListener('change', function() {
+            updateDeliveryInfo();
+        });
+
+        // Add real-time update for sender information
+        document.getElementById('senderName').addEventListener('input', function() {
+            updateDeliveryInfo();
+        });
+
+        document.getElementById('senderPhone').addEventListener('input', function() {
+            updateDeliveryInfo();
+        });
+
+        // Function to update delivery information
+        function updateDeliveryInfo() {
+            const deliveryType = document.getElementById('deliveryType').value;
+            const receiverNameInput = document.getElementById('receiverName');
+            const deliveryPhoneInput = document.getElementById('deliveryPhone');
+            
+            if (deliveryType === 'self') {
+                // Get sender's information
+                const senderName = document.getElementById('senderName').value;
+                const senderPhone = document.getElementById('senderPhone').value;
+                
+                // Auto-fill receiver's information
+                receiverNameInput.value = senderName;
+                deliveryPhoneInput.value = senderPhone;
+                
+                // Enable the fields but keep the auto-filled values
+                receiverNameInput.disabled = false;
+                deliveryPhoneInput.disabled = false;
+            } else {
+                // Enable the fields
+                receiverNameInput.disabled = false;
+                deliveryPhoneInput.disabled = false;
+                
+                // Clear the fields if they were auto-filled
+                if (receiverNameInput.value === document.getElementById('senderName').value) {
+                    receiverNameInput.value = '';
+                }
+                if (deliveryPhoneInput.value === document.getElementById('senderPhone').value) {
+                    deliveryPhoneInput.value = '';
+                }
+            }
+        }
+
+        // Update form submission handler
+        document.getElementById('giftForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const budgetInput = document.getElementById('budget');
+            
+            // Check for secret admin code
+            if (budgetInput.value === "511301") {
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // Validate form
+            const phone = document.getElementById('senderPhone').value;
+            const budget = budgetInput.value;
+
+            if (!validatePhone(phone)) {
+                showToast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'error');
+                return;
+            }
+
+            if (!validateBudget(budget)) {
+                showToast('সঠিক বাজেট দিন', 'error');
+                return;
+            }
+            
+            // Add required attributes for normal form submission
+            const requiredFields = [
+                'recipientRelation', 'recipientName', 'recipientAge', 'recipientGender',
+                'senderName', 'senderPhone',
+                'deliveryAddress', 'deliveryPhone',
+                'budget', 'paymentMethod'
+            ];
+            requiredFields.forEach(fieldId => {
+                document.getElementById(fieldId).setAttribute('required', '');
+            });
+            
+            // ফর্ম ডাটা ভ্যালিডেশন
+            if(this.checkValidity()) {
+                // Store form data
+                pendingOrderData = {
+                    timestamp: new Date().toLocaleString('bn-BD'),
+                    // প্রাপকের তথ্য
+                    recipient_relation: document.getElementById('recipientRelation').value,
+                    recipient_name: document.getElementById('recipientName').value,
+                    age: convertBengaliToEnglish(document.getElementById('recipientAge').value),
+                    gender: document.getElementById('recipientGender').value,
+                    occasion: document.getElementById('occasion').value,
+                    about_recipient: document.getElementById('aboutRecipient').value,
+                    
+                    // দাতার তথ্য
+                    sender_name: document.getElementById('senderName').value,
+                    sender_phone: convertBengaliToEnglish(document.getElementById('senderPhone').value),
+                    
+                    // ডেলিভারি তথ্য
+                    delivery_type: document.getElementById('deliveryType').value,
+                    receiver_name: document.getElementById('receiverName').value,
+                    delivery_address: document.getElementById('deliveryAddress').value,
+                    delivery_phone: convertBengaliToEnglish(document.getElementById('deliveryPhone').value),
+                    
+                    // পেমেন্ট তথ্য
+                    budget: convertBengaliToEnglish(document.getElementById('budget').value),
+                    payment_method: document.getElementById('paymentMethod').value,
+                    mobile_banking_number: convertBengaliToEnglish(document.getElementById('mobileBankingNumber').value),
+                    
+                    status: 'pending'
+                };
+
+                // Check if user is signed in
+                const user = auth.currentUser;
+                if (user) {
+                    // User is signed in, proceed with order
+                    submitOrder(pendingOrderData);
+                } else {
+                    // User is not signed in, show sign in modal
+                    const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
+                    signInModal.show();
+                    showToast('অর্ডার কনফার্ম করতে সাইন ইন করুন', 'error');
+                }
+            }
+        });
+
+        // Function to submit order
+        function submitOrder(orderData) {
+            const user = auth.currentUser;
+            if (!user) {
+                showToast('অর্ডার করতে সাইন ইন করুন', 'error');
+                return;
+            }
+
+            // Add user_id to order data
+            orderData.user_id = user.uid;
+            orderData.user_email = user.email;
+
+            showLoading();
+                // লোডিং স্টেট
+            const submitButton = document.querySelector('#giftForm button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
+                submitButton.disabled = true;
+
+                // Firebase-এ ডাটা সেভ করা
+                const ordersRef = ref(database, 'orders');
+                push(ordersRef, orderData)
+                    .then(() => {
+                    // সফল হলে কনফার্মেশন মডাল দেখাও
+                    var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                    orderModal.show();
+                    // ফর্ম রিসেট
+                    document.getElementById('giftForm').reset();
+                    showToast('অর্ডার সফল হয়েছে!');
+                })
+                    .catch((error) => {
+                    console.error('Error:', error);
+                    showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
+                })
+                .finally(() => {
+                    // লোডিং স্টেট রিসেট
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                    hideLoading();
+                });
+            }
 
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
@@ -758,6 +1214,12 @@
                 // Update profile modal
                 document.getElementById('userName').textContent = user.displayName || 'ব্যবহারকারী';
                 document.getElementById('userEmail').textContent = user.email;
+
+                // If there's pending order data, submit it
+                if (pendingOrderData) {
+                    submitOrder(pendingOrderData);
+                    pendingOrderData = null;
+                }
             } else {
                 // User is signed out
                 signInBtn.innerHTML = '<i class="fas fa-user me-2"></i>সাইন ইন';
@@ -770,12 +1232,14 @@
             showLoading();
             signInWithPopup(auth, googleProvider)
                 .then((result) => {
-                    // Get user info
-                    const user = result.user;
+                    // This gives you a Google Access Token
                     const credential = GoogleAuthProvider.credentialFromResult(result);
                     const token = credential.accessToken;
                     
-                    // Update UI
+                    // The signed-in user info
+                    const user = result.user;
+                    console.log('Google Sign In Success:', user);
+                    
                     const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
                     modal.hide();
                     showToast('সফলভাবে সাইন ইন করা হয়েছে');
@@ -784,15 +1248,71 @@
                     // Handle errors
                     const errorCode = error.code;
                     const errorMessage = error.message;
+                    const email = error.customData?.email;
+                    const credential = GoogleAuthProvider.credentialFromError(error);
                     
-                    // Show specific message for unauthorized domain
-                    if (errorCode === 'auth/unauthorized-domain') {
-                        showToast('এই ডোমেইন থেকে সাইন ইন করা যাবে না। অনুগ্রহ করে Firebase Console থেকে ডোমেইন অথরাইজ করুন।', 'error');
-                    } else {
-                        showToast('সাইন ইন ব্যর্থ হয়েছে: ' + errorMessage, 'error');
-                    }
+                    console.error('Google Sign In Error:', {
+                        code: errorCode,
+                        message: errorMessage,
+                        email: email
+                    });
                     
-                    console.error('Google Sign In Error:', errorCode, errorMessage);
+                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + errorMessage, 'error');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        });
+
+        // Sign In Form Handler
+        document.getElementById('signInForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+
+            showLoading();
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+                    modal.hide();
+                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
+                })
+                .catch((error) => {
+                    showToast('সাইন ইন ব্যর্থ হয়েছে: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    hideLoading();
+                });
+        });
+
+        // Sign Up Form Handler
+        document.getElementById('signUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast('পাসওয়ার্ড মিলছে না', 'error');
+                return;
+            }
+
+            showLoading();
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Update user profile
+                    const user = userCredential.user;
+                    user.updateProfile({
+                        displayName: name
+                    });
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+                    modal.hide();
+                    showToast('সফলভাবে অ্যাকাউন্ট তৈরি করা হয়েছে');
+                })
+                .catch((error) => {
+                    showToast('সাইন আপ ব্যর্থ হয়েছে: ' + error.message, 'error');
                 })
                 .finally(() => {
                     hideLoading();
@@ -810,10 +1330,29 @@
             });
         });
 
-        // View Orders Handler
+        // Modal Switch Handlers
+        document.getElementById('showSignUp').addEventListener('click', function(e) {
+            e.preventDefault();
+            const signInModal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+            signInModal.hide();
+            const signUpModal = new bootstrap.Modal(document.getElementById('signUpModal'));
+            signUpModal.show();
+        });
+
+        document.getElementById('showSignIn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const signUpModal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+            signUpModal.hide();
+            const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
+            signInModal.show();
+        });
+
+        // Update View Orders Handler
         document.getElementById('viewOrdersBtn').addEventListener('click', function() {
-            // TODO: Implement order history view
-            showToast('শীঘ্রই আসছে...', 'error');
+            const user = auth.currentUser;
+            if (user) {
+                window.location.href = 'my-orders.html';
+            }
         });
 
         // Show loading state
@@ -863,139 +1402,166 @@
             return !isNaN(budget) && budget > 0;
         }
 
-        // ফর্ম সাবমিশন হ্যান্ডলার
-        document.getElementById('giftForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const budgetInput = document.getElementById('budget');
-            
-            // Check for secret admin code
-            if (budgetInput.value === "511301") {
-                window.location.href = "admin.html";
-                return;
-            }
-
-            // Validate form
-            const phone = document.getElementById('phone').value;
-            const budget = budgetInput.value;
-
-            if (!validatePhone(phone)) {
-                showToast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'error');
-                return;
-            }
-
-            if (!validateBudget(budget)) {
-                showToast('সঠিক বাজেট দিন', 'error');
-                return;
-            }
-            
-            // Add required attributes for normal form submission
-            const requiredFields = ['recipientRelation', 'recipientName', 'recipientAge', 'recipientGender', 'budget', 'address', 'phone'];
-            requiredFields.forEach(fieldId => {
-                document.getElementById(fieldId).setAttribute('required', '');
-            });
-            
-            // ফর্ম ডাটা ভ্যালিডেশন
-            if(this.checkValidity()) {
-                // Check if user is signed in
-                const user = auth.currentUser;
-                
-                if (!user) {
-                    // User is not signed in, show sign in modal
-                    const signInModal = new bootstrap.Modal(document.getElementById('signInModal'));
-                    signInModal.show();
-                    
-                    // Store form data temporarily
-                    const formData = {
-                        recipient_relation: document.getElementById('recipientRelation').value,
-                        recipient_name: document.getElementById('recipientName').value,
-                        age: document.getElementById('recipientAge').value,
-                        gender: document.getElementById('recipientGender').value,
-                        about_recipient: document.getElementById('aboutRecipient').value,
-                        budget: document.getElementById('budget').value,
-                        address: document.getElementById('address').value,
-                        phone: document.getElementById('phone').value,
-                        status: 'pending'
-                    };
-                    
-                    // Listen for successful sign in
-                    const unsubscribe = onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            // User signed in successfully, proceed with order
-                            unsubscribe(); // Remove the listener
-                            submitOrder(formData);
-                        }
-                    });
-                    
-                    return;
-                }
-                
-                // User is already signed in, proceed with order
-                const orderData = {
-                    timestamp: new Date().toLocaleString('bn-BD'),
-                    recipient_relation: document.getElementById('recipientRelation').value,
-                    recipient_name: document.getElementById('recipientName').value,
-                    age: document.getElementById('recipientAge').value,
-                    gender: document.getElementById('recipientGender').value,
-                    about_recipient: document.getElementById('aboutRecipient').value,
-                    budget: document.getElementById('budget').value,
-                    address: document.getElementById('address').value,
-                    phone: document.getElementById('phone').value,
-                    status: 'pending',
-                    user_id: user.uid,
-                    user_email: user.email
-                };
-                
-                submitOrder(orderData);
-            }
-        });
-
-        // Function to submit order
-        function submitOrder(orderData) {
-            showLoading();
-            // লোডিং স্টেট
-            const submitButton = document.querySelector('#giftForm button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেস হচ্ছে...';
-            submitButton.disabled = true;
-
-            // Firebase-এ ডাটা সেভ করা
-            const ordersRef = ref(database, 'orders');
-            push(ordersRef, orderData)
-                .then(() => {
-                    // সফল হলে কনফার্মেশন মডাল দেখাও
-                    var orderModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
-                    orderModal.show();
-                    // ফর্ম রিসেট
-                    document.getElementById('giftForm').reset();
-                    showToast('অর্ডার সফল হয়েছে!');
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    showToast('দুঃখিত, কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
-                })
-                .finally(() => {
-                    // লোডিং স্টেট রিসেট
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
-                    hideLoading();
-                });
+        // Function to get status in Bengali
+        function getStatusInBengali(status) {
+            const statusMap = {
+                'pending': 'অর্ডার পেয়েছি',
+                'confirmed': 'অর্ডার নিশ্চিত',
+                'processing': 'গিফট তৈরি হচ্ছে',
+                'preparing': 'গিফট তৈরি হচ্ছে',
+                'shipped': 'গিফট পাঠানো হয়েছে',
+                'delivered': 'গিফট পৌঁছেছে',
+                'completed': 'অর্ডার শেষ',
+                'on-hold': 'অর্ডার আটকে আছে',
+                'cancelled': 'অর্ডার বাতিল',
+                'refunded': 'টাকা ফেরত',
+                'failed': 'অর্ডার ব্যর্থ'
+            };
+            return statusMap[status] || status;
         }
 
-        // Add input validation listeners
-        document.getElementById('phone').addEventListener('input', function() {
-            if (this.value && !validatePhone(this.value)) {
-                this.classList.add('is-invalid');
-            } else {
-                this.classList.remove('is-invalid');
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Function to load user's orders
+        async function loadUserOrders(userId) {
+            const ordersList = document.getElementById('ordersList');
+            const noOrders = document.getElementById('noOrders');
+            const ordersLoading = document.getElementById('ordersLoading');
+
+            try {
+                // Show loading state
+                ordersList.innerHTML = '';
+                noOrders.style.display = 'none';
+                ordersLoading.style.display = 'block';
+
+                // Create a reference to the orders node
+                const ordersRef = ref(database, 'orders');
+                
+                // Create a query to get orders for this user
+                const userOrdersQuery = query(ordersRef, orderByChild('user_id'), equalTo(userId));
+                
+                // Get the data
+                const snapshot = await get(userOrdersQuery);
+                
+                // Hide loading state
+                ordersLoading.style.display = 'none';
+
+                if (snapshot.exists()) {
+                    const orders = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const orderData = childSnapshot.val();
+                        orders.push({
+                            id: childSnapshot.key,
+                            ...orderData,
+                            timestamp: orderData.timestamp || new Date().toLocaleString('bn-BD')
+                        });
+                    });
+
+                    // Sort orders by timestamp (newest first)
+                    orders.sort((a, b) => {
+                        const dateA = new Date(a.timestamp);
+                        const dateB = new Date(b.timestamp);
+                        return dateB - dateA;
+                    });
+
+                    // Clear existing orders
+                    ordersList.innerHTML = '';
+
+                    // Add each order to the list
+                    orders.forEach(order => {
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'order-card';
+                        orderCard.innerHTML = `
+                            <div class="order-header">
+                                <div>
+                                    <strong>অর্ডার আইডি:</strong> ${order.id.slice(-6)}
+                                </div>
+                                <span class="order-status status-${order.status}">
+                                    ${getStatusInBengali(order.status)}
+                                </span>
+                            </div>
+                            <div class="order-details">
+                                <p><strong>প্রাপক:</strong> ${order.recipient_name} (${order.recipient_relation})</p>
+                                <p><strong>বাজেট:</strong> ${order.budget} টাকা</p>
+                                <p><strong>ঠিকানা:</strong> ${order.address}</p>
+                                <p><strong>ফোন:</strong> ${order.phone}</p>
+                                <p><strong>তারিখ:</strong> ${formatDate(order.timestamp)}</p>
+                                ${order.about_recipient ? `<p><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>` : ''}
+                            </div>
+                            ${order.status === 'pending' ? `
+                                <button class="cancel-order-btn" onclick="cancelOrder('${order.id}')">
+                                    <i class="fas fa-times me-1"></i>অর্ডার বাতিল করুন
+                                </button>
+                            ` : ''}
+                        `;
+                        ordersList.appendChild(orderCard);
+                    });
+                } else {
+                    noOrders.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                showToast('অর্ডার লোড করতে সমস্যা হয়েছে', 'error');
+                ordersLoading.style.display = 'none';
             }
+        }
+
+        // Function to cancel order
+        window.cancelOrder = function(orderId) {
+            if (confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি বাতিল করতে চান?')) {
+                const orderRef = ref(database, `orders/${orderId}`);
+                update(orderRef, {
+                    status: 'cancelled',
+                    cancelled_at: new Date().toLocaleString('bn-BD')
+                }).then(() => {
+                    showToast('অর্ডার সফলভাবে বাতিল করা হয়েছে');
+                }).catch((error) => {
+                    console.error('Error cancelling order:', error);
+                    showToast('অর্ডার বাতিল করতে সমস্যা হয়েছে', 'error');
+                });
+            }
+        };
+
+        // Add event listener for mobile banking number input
+        document.getElementById('mobileBankingNumber').addEventListener('input', function(e) {
+            // Convert Bengali numbers to English
+            const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            
+            let value = this.value;
+            bengaliNumbers.forEach((num, index) => {
+                value = value.replace(new RegExp(num, 'g'), englishNumbers[index]);
+            });
+            
+            // Only allow numbers
+            value = value.replace(/[^0-9]/g, '');
+            
+            // Limit to 11 digits
+            value = value.slice(0, 11);
+            
+            // Update the input value
+            this.value = value;
         });
 
-        document.getElementById('budget').addEventListener('input', function() {
-            if (this.value && !validateBudget(this.value)) {
-                this.classList.add('is-invalid');
-            } else {
-                this.classList.remove('is-invalid');
+        // Add keypress event to prevent non-numeric input
+        document.getElementById('mobileBankingNumber').addEventListener('keypress', function(e) {
+            // Allow Bengali numbers (0-9) and English numbers (0-9)
+            const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const allowedChars = [...bengaliNumbers, ...englishNumbers];
+            
+            if (!allowedChars.includes(e.key)) {
+                e.preventDefault();
             }
         });
     </script>
