@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার অর্ডার - গিফট বক্স</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --text-color: #2C3E50;
+            --light-text: #7F8C8D;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .orders-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .orders-list {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-preparing { background: #cce5ff; color: #004085; }
+        .status-shipped { background: #e2e3e5; color: #383d41; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .status-completed { background: #d1e7dd; color: #0f5132; }
+        .status-on-hold { background: #f8d7da; color: #721c24; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-refunded { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+
+        .order-details {
+            font-size: 0.95rem;
+        }
+
+        .order-details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .order-details strong {
+            color: #666;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-top: 10px;
+            min-width: 300px;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .no-orders i {
+            font-size: 4rem;
+            color: var(--light-text);
+            margin-bottom: 1rem;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .cancel-order-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-order-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">🎁 গিফট বক্স</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#how-it-works">কিভাবে কাজ করে</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#order">অর্ডার করুন</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#contact">যোগাযোগ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="orders-container">
+        <div class="page-header">
+            <h1 class="mb-3">আমার অর্ডার</h1>
+            <p class="text-muted mb-0">আপনার সব অর্ডারের তালিকা</p>
+        </div>
+
+        <div id="ordersList" class="orders-list">
+            <!-- Orders will be loaded here -->
+        </div>
+
+        <div id="noOrders" class="no-orders" style="display: none;">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>কোন অর্ডার নেই</h3>
+            <p class="text-muted">আপনার প্রথম অর্ডার করুন</p>
+            <a href="index.html#order" class="btn btn-primary mt-3">অর্ডার করুন</a>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getDatabase, ref, query, orderByChild, equalTo, onValue, update } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCj8CtGV-_11cuwktt916lbxYU7zEvWpSY",
+            authDomain: "gift-kinbo.firebaseapp.com",
+            projectId: "gift-kinbo",
+            storageBucket: "gift-kinbo.firebasestorage.app",
+            messagingSenderId: "171712833751",
+            appId: "1:171712833751:web:8c02f697add425141f2892",
+            measurementId: "G-SW1X5NNGXJ",
+            databaseURL: "https://gift-kinbo-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Function to get status in Bengali
+        function getStatusInBengali(status) {
+            const statusMap = {
+                'pending': 'অর্ডার পেয়েছি',
+                'confirmed': 'অর্ডার নিশ্চিত',
+                'processing': 'গিফট তৈরি হচ্ছে',
+                'preparing': 'গিফট তৈরি হচ্ছে',
+                'shipped': 'গিফট পাঠানো হয়েছে',
+                'delivered': 'গিফট পৌঁছেছে',
+                'completed': 'অর্ডার শেষ',
+                'on-hold': 'অর্ডার আটকে আছে',
+                'cancelled': 'অর্ডার বাতিল',
+                'refunded': 'টাকা ফেরত',
+                'failed': 'অর্ডার ব্যর্থ'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Function to show toast message
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast show`;
+            toast.innerHTML = `
+                <div class="toast-header ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white">
+                    <strong class="me-auto">${type === 'success' ? 'সফল' : 'ত্রুটি'}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Function to load orders
+        function loadOrders(userId) {
+            const ordersList = document.getElementById('ordersList');
+            const noOrders = document.getElementById('noOrders');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Show loading state
+            loadingOverlay.style.display = 'flex';
+
+            // Create a reference to the orders node
+            const ordersRef = ref(database, 'orders');
+            const userOrdersQuery = query(ordersRef, orderByChild('user_id'), equalTo(userId));
+
+            // Listen for changes
+            onValue(userOrdersQuery, (snapshot) => {
+                loadingOverlay.style.display = 'none';
+                ordersList.innerHTML = '';
+
+                if (snapshot.exists()) {
+                    const orders = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const orderData = childSnapshot.val();
+                        orders.push({
+                            id: childSnapshot.key,
+                            ...orderData,
+                            timestamp: orderData.timestamp || new Date().toLocaleString('bn-BD')
+                        });
+                    });
+
+                    // Sort orders by timestamp (newest first)
+                    orders.sort((a, b) => {
+                        const dateA = new Date(a.timestamp);
+                        const dateB = new Date(b.timestamp);
+                        return dateB - dateA;
+                    });
+
+                    // Add each order to the list
+                    orders.forEach(order => {
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'order-card';
+                        orderCard.innerHTML = `
+                            <div class="order-header">
+                                <div>
+                                    <strong>অর্ডার আইডি:</strong> ${order.id.slice(-6)}
+                                </div>
+                                <span class="order-status status-${order.status}">
+                                    ${getStatusInBengali(order.status)}
+                                </span>
+                            </div>
+                            <div class="order-details">
+                                <p><strong>প্রাপক:</strong> ${order.recipient_name} (${order.recipient_relation})</p>
+                                <p><strong>বাজেট:</strong> ${order.budget} টাকা</p>
+                                <p><strong>ঠিকানা:</strong> ${order.address}</p>
+                                <p><strong>ফোন:</strong> ${order.phone}</p>
+                                <p><strong>তারিখ:</strong> ${formatDate(order.timestamp)}</p>
+                                ${order.about_recipient ? `<p><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>` : ''}
+                            </div>
+                            ${order.status === 'pending' ? `
+                                <button class="cancel-order-btn" onclick="cancelOrder('${order.id}')">
+                                    <i class="fas fa-times me-1"></i>অর্ডার বাতিল করুন
+                                </button>
+                            ` : ''}
+                        `;
+                        ordersList.appendChild(orderCard);
+                    });
+                } else {
+                    noOrders.style.display = 'block';
+                }
+            }, (error) => {
+                console.error('Error loading orders:', error);
+                showToast('অর্ডার লোড করতে সমস্যা হয়েছে', 'error');
+                loadingOverlay.style.display = 'none';
+            });
+        }
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, load their orders
+                loadOrders(user.uid);
+            } else {
+                // User is not signed in, redirect to home page
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Function to cancel order
+        window.cancelOrder = function(orderId) {
+            if (confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি বাতিল করতে চান?')) {
+                const orderRef = ref(database, `orders/${orderId}`);
+                update(orderRef, {
+                    status: 'cancelled',
+                    cancelled_at: new Date().toLocaleString('bn-BD')
+                }).then(() => {
+                    showToast('অর্ডার সফলভাবে বাতিল করা হয়েছে');
+                }).catch((error) => {
+                    console.error('Error cancelling order:', error);
+                    showToast('অর্ডার বাতিল করতে সমস্যা হয়েছে', 'error');
+                });
+            }
+        };
+    </script>
+</body>
+</html>
