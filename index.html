@@ -1085,14 +1085,111 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            // Your Firebase config here
+            apiKey: "AIzaSyCj8CtGV-_11cuwktt916lbxYU7zEvWpSY",
+            authDomain: "gift-kinbo.firebaseapp.com",
+            projectId: "gift-kinbo",
+            storageBucket: "gift-kinbo.firebasestorage.app",
+            messagingSenderId: "171712833751",
+            appId: "1:171712833751:web:8c02f697add425141f2892",
+            measurementId: "G-SW1X5NNGXJ",
+            databaseURL: "https://gift-kinbo-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Google Sign In
+        document.getElementById('googleSignIn').addEventListener('click', function() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // User signed in successfully
+                    const user = result.user;
+                    // Close the sign in modal
+                    const signInModal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+                    signInModal.hide();
+                    // Show success message
+                    showToast('সফলভাবে সাইন ইন করা হয়েছে');
+                })
+                .catch((error) => {
+                    // Handle errors
+                    console.error('Google sign in error:', error);
+                    showToast('সাইন ইন করতে সমস্যা হয়েছে', 'error');
+                });
+        });
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                document.querySelector('[data-bs-target="#signInModal"]').style.display = 'none';
+                // Add profile button
+                const profileBtn = document.createElement('button');
+                profileBtn.className = 'btn btn-outline-light ms-2';
+                profileBtn.setAttribute('data-bs-toggle', 'modal');
+                profileBtn.setAttribute('data-bs-target', '#userProfileModal');
+                profileBtn.innerHTML = '<i class="fas fa-user me-2"></i>প্রোফাইল';
+                document.querySelector('.navbar-nav').appendChild(profileBtn);
+                
+                // Update profile modal
+                document.getElementById('userName').textContent = user.displayName || 'নাম নেই';
+                document.getElementById('userEmail').textContent = user.email;
+            } else {
+                // User is signed out
+                document.querySelector('[data-bs-target="#signInModal"]').style.display = 'block';
+                // Remove profile button if exists
+                const profileBtn = document.querySelector('[data-bs-target="#userProfileModal"]');
+                if (profileBtn) {
+                    profileBtn.remove();
+                }
+            }
+        });
+
+        // Sign out
+        document.getElementById('signOutBtn').addEventListener('click', function() {
+            auth.signOut().then(() => {
+                const userProfileModal = bootstrap.Modal.getInstance(document.getElementById('userProfileModal'));
+                userProfileModal.hide();
+                showToast('সফলভাবে সাইন আউট করা হয়েছে');
+            }).catch((error) => {
+                console.error('Sign out error:', error);
+                showToast('সাইন আউট করতে সমস্যা হয়েছে', 'error');
+            });
+        });
     </script>
 </body>
 </html> 
