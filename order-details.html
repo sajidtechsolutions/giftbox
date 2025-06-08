@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অর্ডার বিস্তারিত - গিফট বক্স</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --text-color: #2C3E50;
+            --light-text: #7F8C8D;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .order-details-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .order-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-preparing { background: #cce5ff; color: #004085; }
+        .status-shipped { background: #e2e3e5; color: #383d41; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .status-completed { background: #d1e7dd; color: #0f5132; }
+        .status-on-hold { background: #f8d7da; color: #721c24; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-refunded { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+
+        .order-section {
+            margin-bottom: 2rem;
+        }
+
+        .order-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            margin-bottom: 1rem;
+        }
+
+        .info-item strong {
+            color: var(--light-text);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">🎁 গিফট বক্স</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#how-it-works">কিভাবে কাজ করে</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#order">অর্ডার করুন</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html#contact">যোগাযোগ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="order-details-container">
+        <div id="orderDetails" class="order-card">
+            <!-- Order details will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="my-orders.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            // Your Firebase config here
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Function to get status in Bengali
+        function getStatusInBengali(status) {
+            const statusMap = {
+                'pending': 'অর্ডার পেয়েছি',
+                'confirmed': 'অর্ডার নিশ্চিত',
+                'processing': 'গিফট তৈরি হচ্ছে',
+                'preparing': 'গিফট তৈরি হচ্ছে',
+                'shipped': 'গিফট পাঠানো হয়েছে',
+                'delivered': 'গিফট পৌঁছেছে',
+                'completed': 'অর্ডার শেষ',
+                'on-hold': 'অর্ডার আটকে আছে',
+                'cancelled': 'অর্ডার বাতিল',
+                'refunded': 'টাকা ফেরত',
+                'failed': 'অর্ডার ব্যর্থ'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Function to load order details
+        async function loadOrderDetails(orderId) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const orderDetails = document.getElementById('orderDetails');
+
+            try {
+                loadingOverlay.style.display = 'flex';
+                const orderRef = ref(database, `orders/${orderId}`);
+                const snapshot = await get(orderRef);
+
+                if (snapshot.exists()) {
+                    const order = snapshot.val();
+                    orderDetails.innerHTML = `
+                        <div class="order-header">
+                            <h2 class="mb-3">অর্ডার #${orderId.slice(-6)}</h2>
+                            <span class="order-status status-${order.status}">
+                                ${getStatusInBengali(order.status)}
+                            </span>
+                        </div>
+
+                        <div class="order-section">
+                            <h3>অর্ডার তথ্য</h3>
+                            <div class="order-info">
+                                <div class="info-item">
+                                    <strong>অর্ডার তারিখ</strong>
+                                    ${formatDate(order.timestamp)}
+                                </div>
+                                <div class="info-item">
+                                    <strong>অর্ডার স্ট্যাটাস</strong>
+                                    ${getStatusInBengali(order.status)}
+                                </div>
+                                <div class="info-item">
+                                    <strong>বাজেট</strong>
+                                    ${order.budget} টাকা
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-section">
+                            <h3>প্রাপকের তথ্য</h3>
+                            <div class="order-info">
+                                <div class="info-item">
+                                    <strong>নাম</strong>
+                                    ${order.recipient_name}
+                                </div>
+                                <div class="info-item">
+                                    <strong>সম্পর্ক</strong>
+                                    ${order.recipient_relation}
+                                </div>
+                                ${order.about_recipient ? `
+                                    <div class="info-item">
+                                        <strong>প্রাপক সম্পর্কে</strong>
+                                        ${order.about_recipient}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="order-section">
+                            <h3>ডেলিভারি তথ্য</h3>
+                            <div class="order-info">
+                                <div class="info-item">
+                                    <strong>ঠিকানা</strong>
+                                    ${order.address}
+                                </div>
+                                <div class="info-item">
+                                    <strong>ফোন</strong>
+                                    ${order.phone}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    orderDetails.innerHTML = `
+                        <div class="alert alert-danger">
+                            অর্ডার খুঁজে পাওয়া যায়নি
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading order details:', error);
+                orderDetails.innerHTML = `
+                    <div class="alert alert-danger">
+                        অর্ডার লোড করতে সমস্যা হয়েছে
+                    </div>
+                `;
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Check authentication and load order details
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('id');
+                if (orderId) {
+                    loadOrderDetails(orderId);
+                } else {
+                    window.location.href = 'my-orders.html';
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html> 
