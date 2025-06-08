@@ -73,6 +73,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             position: relative;
+            padding-bottom: 4rem;
         }
 
         .order-card:hover {
@@ -109,6 +110,7 @@
 
         .order-details {
             font-size: 0.95rem;
+            margin-bottom: 1rem;
         }
 
         .order-details p {
@@ -208,11 +210,26 @@
             border-radius: 5px;
             font-size: 0.9rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 5px rgba(220, 53, 69, 0.2);
+            z-index: 1;
         }
 
         .cancel-order-btn:hover {
             background: #c82333;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .cancel-order-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+        }
+
+        .cancel-order-btn i {
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -319,14 +336,27 @@
 
         // Function to format date
         function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleString('bn-BD', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            // If the date is already in Bengali format, return it as is
+            if (dateString.includes('বাংলা') || dateString.includes('PM') || dateString.includes('AM')) {
+                return dateString;
+            }
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return dateString; // Return original string if date is invalid
+                }
+                return date.toLocaleString('bn-BD', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                return dateString; // Return original string if there's an error
+            }
         }
 
         // Function to show toast message
@@ -387,9 +417,16 @@
 
                     // Add each order to the list
                     orders.forEach(order => {
+                        // Debug logs
+                        console.log('Order ID:', order.id);
+                        console.log('Phone number:', order.phone);
+                        console.log('Phone type:', typeof order.phone);
+                        
                         const orderCard = document.createElement('div');
                         orderCard.className = 'order-card';
-                        orderCard.innerHTML = `
+                        
+                        // Create order details HTML
+                        const orderDetails = `
                             <div class="order-header">
                                 <div>
                                     <strong>অর্ডার আইডি:</strong> ${order.id.slice(-6)}
@@ -399,19 +436,21 @@
                                 </span>
                             </div>
                             <div class="order-details">
-                                <p><strong>প্রাপক:</strong> ${order.recipient_name} (${order.recipient_relation})</p>
-                                <p><strong>বাজেট:</strong> ${order.budget} টাকা</p>
-                                <p><strong>ঠিকানা:</strong> ${order.address}</p>
-                                <p><strong>ফোন:</strong> ${order.phone}</p>
-                                <p><strong>তারিখ:</strong> ${formatDate(order.timestamp)}</p>
+                                <p><strong>প্রাপক:</strong> ${order.recipient_name || 'নাই'} (${order.recipient_relation || 'নাই'})</p>
+                                <p><strong>বাজেট:</strong> ${order.budget || '0'} টাকা</p>
+                                <p><strong>ঠিকানা:</strong> ${order.delivery_address || order.address || 'নাই'}</p>
+                                <p><strong>ফোন:</strong> ${String(order.phone || 'নাই')}</p>
+                                <p><strong>তারিখ:</strong> ${order.timestamp ? formatDate(order.timestamp) : 'নাই'}</p>
                                 ${order.about_recipient ? `<p><strong>প্রাপক সম্পর্কে:</strong> ${order.about_recipient}</p>` : ''}
                             </div>
                             ${order.status === 'pending' ? `
-                                <button class="cancel-order-btn" onclick="cancelOrder('${order.id}')">
+                                <button class="cancel-order-btn" onclick="event.stopPropagation(); cancelOrder('${order.id}')">
                                     <i class="fas fa-times me-1"></i>অর্ডার বাতিল করুন
                                 </button>
                             ` : ''}
                         `;
+                        
+                        orderCard.innerHTML = orderDetails;
                         ordersList.appendChild(orderCard);
                     });
                 } else {
@@ -438,14 +477,19 @@
         // Function to cancel order
         window.cancelOrder = function(orderId) {
             if (confirm('আপনি কি নিশ্চিত যে আপনি এই অর্ডারটি বাতিল করতে চান?')) {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.style.display = 'flex';
+                
                 const orderRef = ref(database, `orders/${orderId}`);
                 update(orderRef, {
                     status: 'cancelled',
                     cancelled_at: new Date().toLocaleString('bn-BD')
                 }).then(() => {
+                    loadingOverlay.style.display = 'none';
                     showToast('অর্ডার সফলভাবে বাতিল করা হয়েছে');
                 }).catch((error) => {
                     console.error('Error cancelling order:', error);
+                    loadingOverlay.style.display = 'none';
                     showToast('অর্ডার বাতিল করতে সমস্যা হয়েছে', 'error');
                 });
             }
