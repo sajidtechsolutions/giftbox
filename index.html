@@ -80,7 +80,7 @@
     <section class="testimonials-section">
         <div class="container">
             <h2 class="text-center mb-5">আমাদের গ্রাহকদের অভিজ্ঞতা</h2>
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <div class="row justify-content-center">
@@ -164,6 +164,40 @@
             </div>
         </div>
     </section>
+
+    <script>
+        // Function to shuffle array elements
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to randomize testimonials
+        function randomizeTestimonials() {
+            const carousel = document.getElementById('testimonialCarousel');
+            const carouselInner = carousel.querySelector('.carousel-inner');
+            const items = Array.from(carouselInner.querySelectorAll('.carousel-item'));
+            
+            // Remove active class from all items
+            items.forEach(item => item.classList.remove('active'));
+            
+            // Shuffle the items
+            const shuffledItems = shuffleArray(items);
+            
+            // Add active class to first item
+            shuffledItems[0].classList.add('active');
+            
+            // Clear and reappend items
+            carouselInner.innerHTML = '';
+            shuffledItems.forEach(item => carouselInner.appendChild(item));
+        }
+
+        // Call the function when the page loads
+        document.addEventListener('DOMContentLoaded', randomizeTestimonials);
+    </script>
 
     <section class="trust-section py-5">
         <div class="container">
@@ -319,35 +353,35 @@
                                 <div class="card-body">
                             <div class="mb-3">
                                         <label class="form-label">আপনার সাথে সম্পর্ক</label>
-                                        <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" id="recipientRelation">
+                                        <input type="text" class="form-control" placeholder="যেমন: মা, বাবা, বন্ধু, ভাই, বোন" id="recipientRelation" required>
                             </div>
                             <div class="mb-3">
                                         <label class="form-label">নাম</label>
-                                        <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" id="recipientName">
+                                        <input type="text" class="form-control" placeholder="যার জন্য গিফট দিবেন তার নাম" id="recipientName" required>
                             </div>
                             <div class="mb-3">
                                         <label class="form-label">বয়স</label>
-                                        <input type="number" class="form-control" placeholder="যেমন: ২৫" id="recipientAge">
+                                        <input type="number" class="form-control" placeholder="যেমন: ২৫" id="recipientAge" required>
                             </div>
                             <div class="mb-3">
                                         <label class="form-label">জেন্ডার</label>
-                                        <select class="form-select" id="recipientGender">
-                                    <option value="">সিলেক্ট করুন</option>
+                                        <select class="form-select" id="recipientGender" required>
+                                            <option value="">সিলেক্ট করুন</option>
                                     <option value="male">ছেলে</option>
                                     <option value="female">মেয়ে</option>
                                 </select>
                             </div>
                                     <div class="mb-3">
-                                        <label class="form-label">উপলক্ষ</label>
+                                        <label class="form-label">উপলক্ষ (অপশনাল)</label>
                                         <input type="text" class="form-control" placeholder="যেমন: জন্মদিন, বিবাহ বার্ষিকী, ইত্যাদি" id="occasion">
                                     </div>
                             <div class="mb-3">
-                                <label class="form-label">তার সম্পর্কে কিছু বলুন</label>
+                                <label class="form-label">তার সম্পর্কে কিছু বলুন (অপশনাল)</label>
                                         <textarea class="form-control" rows="3" placeholder="যেমন: তার পছন্দের জিনিস, শখ, ব্যক্তিত্ব, বিশেষ দিন, ইত্যাদি" id="aboutRecipient"></textarea>
                             </div>
                             <div class="mb-3">
                                         <label class="form-label">কত টাকার গিফট চান?</label>
-                                        <input type="number" class="form-control" placeholder="যেমন: ৪৯৯ টাকা" id="budget">
+                                        <input type="number" class="form-control" placeholder="যেমন: ৪৯৯ টাকা" id="budget" required>
                             </div>
                                 </div>
                             </div>
@@ -360,11 +394,11 @@
                                 <div class="card-body">
                             <div class="mb-3">
                                         <label class="form-label">আপনার নাম</label>
-                                        <input type="text" class="form-control" placeholder="আপনার পূর্ণ নাম" id="senderName">
+                                        <input type="text" class="form-control" placeholder="আপনার পূর্ণ নাম" id="senderName" required>
                             </div>
                             <div class="mb-3">
                                         <label class="form-label">মোবাইল নম্বর</label>
-                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="senderPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11">
+                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="senderPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11" required>
                             </div>
                                 </div>
                             </div>
@@ -377,7 +411,7 @@
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <label class="form-label">কোথায় পাঠাবেন?</label>
-                                        <select class="form-select" id="deliveryType">
+                                        <select class="form-select" id="deliveryType" required>
                                             <option value="">সিলেক্ট করুন</option>
                                             <option value="self">নিজের কাছে</option>
                                             <option value="recipient">সরাসরি যার জন্য গিফট তার কাছে</option>
@@ -385,15 +419,15 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">যার কাছে পাঠাবেন তার নাম</label>
-                                        <input type="text" class="form-control" placeholder="যার কাছে গিফট পাঠাবেন তার নাম" id="receiverName">
+                                        <input type="text" class="form-control" placeholder="যার কাছে গিফট পাঠাবেন তার নাম" id="receiverName" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">ঠিকানা</label>
-                                        <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" id="deliveryAddress"></textarea>
+                                        <textarea class="form-control" rows="3" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: বাড়ি/ফ্ল্যাট নম্বর, রোড/লেন নম্বর, গ্রাম/পাড়া, ইউনিয়ন/ওয়ার্ড, থানা, জেলা, ইত্যাদি)" id="deliveryAddress" required></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">ফোন নম্বর</label>
-                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="deliveryPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11">
+                                        <input type="tel" class="form-control" placeholder="যেমন: ০১৭১২৩৪৫৬৭৮" id="deliveryPhone" pattern="[0-9]*" inputmode="numeric" maxlength="11" required>
                                     </div>
                                 </div>
                             </div>
@@ -928,19 +962,7 @@
                     <div class="text-center mb-4">
                         <span class="text-muted">অথবা</span>
                     </div>
-                    <form id="signInForm">
-                        <div class="mb-3">
-                            <label class="form-label">ইমেইল</label>
-                            <input type="email" class="form-control" id="signInEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">পাসওয়ার্ড</label>
-                            <input type="password" class="form-control" id="signInPassword" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">সাইন ইন</button>
-                        </div>
-                    </form>
+                    
                     <div class="text-center mt-3">
                         <p class="mb-0">অ্যাকাউন্ট নেই? <a href="#" id="showSignUp">সাইন আপ করুন</a></p>
                     </div>
@@ -1194,6 +1216,147 @@
                 console.error('Sign out error:', error);
                 showToast('সাইন আউট করতে সমস্যা হয়েছে', 'error');
             });
+        });
+
+        document.getElementById('viewOrdersBtn').addEventListener('click', function() {
+            window.location.href = 'my-orders.html';
+        });
+
+        // Handle order form submission
+        document.getElementById('giftForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate required fields
+            const requiredFields = {
+                'recipientRelation': 'আপনার সাথে সম্পর্ক',
+                'recipientName': 'নাম',
+                'recipientAge': 'বয়স',
+                'recipientGender': 'জেন্ডার',
+                'budget': 'গিফটের মূল্য',
+                'senderName': 'আপনার নাম',
+                'senderPhone': 'মোবাইল নম্বর',
+                'receiverName': 'যার কাছে পাঠাবেন তার নাম',
+                'deliveryAddress': 'ঠিকানা',
+                'deliveryPhone': 'ফোন নম্বর'
+            };
+
+            let isValid = true;
+            let firstInvalidField = null;
+
+            for (const [fieldId, fieldName] of Object.entries(requiredFields)) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    if (!firstInvalidField) {
+                        firstInvalidField = field;
+                    }
+                    // Add error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback';
+                    errorDiv.textContent = `${fieldName} আবশ্যক`;
+                    field.parentNode.appendChild(errorDiv);
+                } else {
+                    field.classList.remove('is-invalid');
+                    const errorDiv = field.parentNode.querySelector('.invalid-feedback');
+                    if (errorDiv) {
+                        errorDiv.remove();
+                    }
+                }
+            }
+
+            if (!isValid) {
+                firstInvalidField.focus();
+                showToast('সব আবশ্যক তথ্য দিন', 'error');
+                return;
+            }
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Get form values
+            const orderData = {
+                recipient_relation: document.getElementById('recipientRelation').value,
+                recipient_name: document.getElementById('recipientName').value,
+                age: document.getElementById('recipientAge').value,
+                gender: document.getElementById('recipientGender').value,
+                occasion: document.getElementById('occasion').value,
+                about_recipient: document.getElementById('aboutRecipient').value,
+                budget: document.getElementById('budget').value,
+                sender_name: document.getElementById('senderName').value,
+                sender_phone: document.getElementById('senderPhone').value,
+                delivery_type: document.getElementById('deliveryType').value,
+                receiver_name: document.getElementById('receiverName').value,
+                delivery_address: document.getElementById('deliveryAddress').value,
+                phone: document.getElementById('deliveryPhone').value,
+                payment_method: document.getElementById('paymentMethod').value,
+                status: 'pending',
+                timestamp: new Date().toLocaleString('bn-BD'),
+                last_status_update: new Date().toLocaleString('bn-BD')
+            };
+
+            // Get current user
+            const user = auth.currentUser;
+            if (!user) {
+                showToast('অর্ডার করতে সাইন ইন করুন', 'error');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                return;
+            }
+
+            // Add user ID to order data
+            orderData.user_id = user.uid;
+
+            // Save order to Firebase
+            database.ref('orders').push(orderData)
+                .then(() => {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    
+                    // Show success message
+                    showToast('অর্ডার সফল হয়েছে!');
+                    
+                    // Show order confirmation modal
+                    const orderConfirmationModal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                    orderConfirmationModal.show();
+                    
+                    // Reset form
+                    document.getElementById('giftForm').reset();
+                })
+                .catch((error) => {
+                    console.error('Error saving order:', error);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    showToast('অর্ডার সেভ করতে সমস্যা হয়েছে', 'error');
+                });
+        });
+
+        // Handle payment method change
+        document.getElementById('paymentMethod').addEventListener('change', function(e) {
+            const paymentMethod = e.target.value;
+            const bkashSection = document.getElementById('bkashPaymentSection');
+            const mobileBankingFields = document.getElementById('mobileBankingFields');
+            const paymentInstructions = document.getElementById('paymentInstructions');
+            
+            // Hide all payment sections
+            bkashSection.style.display = 'none';
+            mobileBankingFields.style.display = 'none';
+            
+            // Show relevant payment section
+            if (paymentMethod === 'bkash') {
+                bkashSection.style.display = 'block';
+                // Update bKash amount
+                const budget = document.getElementById('budget').value || '0';
+                document.getElementById('bkashAmount').textContent = `${budget} টাকা`;
+            } else if (paymentMethod === 'nagad' || paymentMethod === 'rocket') {
+                mobileBankingFields.style.display = 'block';
+                const number = paymentMethod === 'nagad' ? '01745897322' : '01745897322';
+                paymentInstructions.textContent = `${paymentMethod === 'nagad' ? 'নগদ' : 'রকেট'} নম্বর: ${number}`;
+            }
+        });
+
+        // Update bKash amount when budget changes
+        document.getElementById('budget').addEventListener('input', function(e) {
+            const budget = e.target.value || '0';
+            document.getElementById('bkashAmount').textContent = `${budget} টাকা`;
         });
     </script>
 </body>
