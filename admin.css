@@ -1,0 +1,588 @@
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #4ECDC4;
+    --accent-color: #FFE66D;
+    --text-color: #2C3E50;
+    --light-text: #7F8C8D;
+}
+
+body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 1rem 0;
+}
+
+.stats-label {
+    color: var(--light-text);
+    font-size: 1.1rem;
+}
+
+.order-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.order-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1rem;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-body {
+    padding: 1rem;
+}
+
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.order-info-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.order-info-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.order-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.status-select {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    border: none;
+    background-color: #4ECDC4;
+    color: white;
+}
+
+.status-select option {
+    background-color: white;
+    color: var(--text-color);
+}
+
+.btn-details {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-details:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.modal-details {
+    font-size: 1.1rem;
+    padding: 1.5rem;
+}
+
+.modal-details p {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.modal-details p:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.modal-details strong {
+    color: var(--primary-color);
+    margin-right: 0.8rem;
+    font-size: 1.1rem;
+    min-width: 150px;
+    display: inline-block;
+}
+
+.modal-details .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    background-color: #FFE66D;
+    color: #2C3E50;
+}
+
+.modal-details .about-section {
+    background-color: #fff3cd;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border-left: 4px solid #ffc107;
+}
+
+.modal-details .contact-info {
+    background-color: #d1ecf1;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border-left: 4px solid #0dcaf0;
+}
+
+.modal-details .personal-info {
+    background-color: #d4edda;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border-left: 4px solid #198754;
+}
+
+.modal-details .order-id {
+    font-family: monospace;
+    background-color: #e2e3e5;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #495057;
+}
+
+.modal-details .budget {
+    color: #198754;
+    font-weight: bold;
+}
+
+.modal-details .date-time {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #FFE66D;
+    color: #2C3E50;
+}
+
+.status-processing {
+    background-color: #4ECDC4;
+    color: white;
+}
+
+.status-completed {
+    background-color: #2ECC71;
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #E74C3C;
+    color: white;
+}
+
+.status-confirmed {
+    background-color: #3498DB;
+    color: white;
+}
+
+.status-shipped {
+    background-color: #9B59B6;
+    color: white;
+}
+
+.status-delivered {
+    background-color: #27AE60;
+    color: white;
+}
+
+.status-refunded {
+    background-color: #E67E22;
+    color: white;
+}
+
+.status-on-hold {
+    background-color: #95A5A6;
+    color: white;
+}
+
+.status-failed {
+    background-color: #C0392B;
+    color: white;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+
+.search-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.filter-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.pagination {
+    margin-top: 2rem;
+}
+
+.page-link {
+    color: var(--primary-color);
+    border: none;
+    margin: 0 0.2rem;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+}
+
+.page-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.login-container h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.admin-content {
+    display: none;
+}
+
+.login-content {
+    display: block;
+}
+
+.quick-actions {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.quick-action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover {
+    transform: scale(1.1);
+    color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+
+    .stats-number {
+        font-size: 2rem;
+    }
+
+    .order-card {
+        margin-bottom: 1rem;
+    }
+
+    .order-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .order-info-left, .order-info-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .search-box {
+        padding: 1rem;
+    }
+
+    .search-box .row > div {
+        margin-bottom: 1rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-details {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .modal-details strong {
+        min-width: 120px;
+        font-size: 1rem;
+    }
+
+    .quick-actions {
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .quick-action-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .order-card:hover,
+    .stats-card:hover,
+    .btn-details:hover {
+        transform: none;
+    }
+
+    .modal-details p:hover {
+        transform: none;
+    }
+
+    .btn-action,
+    .btn-details,
+    .status-select {
+        padding: 0.8rem 1.2rem;
+        min-height: 44px;
+    }
+}
+
+/* Loading States */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.stats-number .fa-spinner {
+    color: var(--primary-color);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better Touch Targets */
+.nav-link,
+.page-link,
+.btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Improved Form Controls */
+.form-control,
+.form-select {
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Better Modal Experience */
+.modal {
+    touch-action: manipulation;
+}
+
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Status Badge Improvements */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 0.5rem 1rem;
+}
+
+/* Search and Filter Improvements */
+.search-box input,
+.search-box select {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* Pagination Improvements */
+.pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.page-link {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-history {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content h6 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+} 
